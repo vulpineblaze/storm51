@@ -1,7 +1,7 @@
 
 function main(){
     
-
+	// location.reload(true);
 
 	var config = {
 	    type: Phaser.WEBGL,

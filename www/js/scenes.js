@@ -41,7 +41,7 @@ NT.Scenes.Intro = new Phaser.Class({
 	    black_center.setDisplayOrigin(0);
 
 
-        this.add.text(160, 80, NT.Messages.introTextMsg, { font: '48px Impact', fill: '#fff' });
+        this.add.text(160, 80, NT.Messages.introTextMsg, { font: '48px Anton', fill: '#fff' });
 
 
         this.input.once('pointerup', function () {
@@ -76,40 +76,101 @@ NT.Scenes.Win = new Phaser.Class({
     {
 	    // this.load.image('teal_border', 'img/backgrounds_teal_border.png');
 	    this.load.image('black_center', 'img/background_win_lose.png');
+        this.load.spritesheet('booty_shorts', 'img/booty_shorts.png', { frameWidth: 200, frameHeight: 200 });
+        this.load.spritesheet('dancing_alien1', 'img/dancing_alien1.png', { frameWidth: 210, frameHeight: 630 });
+        this.load.spritesheet('hoops', 'img/hoops.png', { frameWidth: 200, frameHeight: 200 });
+
     },
 
     create: function ()
     {
-    	// var teal_border = this.add.image(0, 0, 'teal_border');
-	    // teal_border.setDisplayOrigin(0);
-
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
 
+        var booty_shortsAnimation = this.anims.create({
+            key: 'booty_shorts',
+            frames: this.anims.generateFrameNumbers('booty_shorts'),
+            frameRate: 16,
+            yoyo: true,
+            repeat: -1
+        });
 
-	    this.add.text(NT.Globals.horizontalOffset, 80, 
+        var booty_shorts = this.add.sprite(NT.Globals.horzCenter,
+                                            NT.Globals.vertOneThird * 2.5, 
+                                            'booty_shorts');
+        booty_shorts.anims.play('booty_shorts');
+
+
+
+        var dancing_alien1Animation = this.anims.create({
+            key: 'dancing_alien1',
+            frames: this.anims.generateFrameNumbers('dancing_alien1'),
+            frameRate: 12,
+            yoyo: true,
+            repeat: -1
+        });
+
+        var dancing_alien1 = this.add.sprite(NT.Globals.vertOneThird*0.5,
+                                            NT.Globals.vertOneThird, 
+                                            'dancing_alien1');
+        dancing_alien1.anims.play('dancing_alien1');
+
+
+
+        var hoopsAnimation = this.anims.create({
+            key: 'hoops',
+            frames: this.anims.generateFrameNumbers('hoops'),
+            frameRate: 12,
+            repeat: -1
+        });
+
+        var hoops = this.add.sprite(NT.Globals.horzCenter*1.5,
+                                            NT.Globals.vertOneThird*1.5, 
+                                            'hoops');
+        hoops.anims.play('hoops');
+
+
+	    var winText = this.add.text(NT.Globals.horizontalOffset, 80, 
 	    	NT.Messages.winTextMsg + "\n" + this.inText, 
 	    	{ align: 'center', 
-	    		font: '48px Impact', 
+	    		font: '48px Anton', 
 	    		fill: '#fff', 
 	    		wordWrap: {width: NT.Globals.gameWidth - (NT.Globals.horizontalOffset*2)} 
 	    	});
-        // this.add.text(40, 80, NT.Messages.winTextMsg + this.inText, { align: 'center', font: '48px Impact', fill: '#fff' });
-	    this.add.text(60, 780, NT.Messages.restartTextMsg, { align: 'center', font: '48px Impact', fill: '#fff' });
+        winText.setStroke('#000', 5);        
+
+
+	    var restartText = this.add.text(60, NT.Globals.vertOneThird*2.5, 
+            NT.Messages.restartTextMsg, 
+            { align: 'center', font: '48px Anton', fill: '#fff' });
+        restartText.setStroke('#000', 5);        
+
+
+        NT.Messages.timeText = this.add.text(40, NT.Globals.vertOneThird*2.8, 
+                                    NT.Messages.timeTextPrefix + NT.Messages.savedTimeFormatted() , 
+                                    { fontFamily: 'Anton', fontSize: '36px', fill: '#fff' });
+        NT.Messages.timeText.setStroke('#000', 5);        
+
 
 
         var fullClick = false;
 
-	    this.input.once('pointerup', function () {
+        this.input.once('pointerup', function () {
 
             fullClick = true;
+            console.log("pointerup , click!");
+            var deadlockTimer = this.time.delayedCall(NT.Globals.deadlockTimeDelay, 
+                                                    function(){this.scene.start('play')}, 
+                                                    [], this); 
 
         }, this);
 
         this.input.once('pointerdown', function () {
 
+            console.log("pointerdown , click!");
             if(fullClick){
-            	this.scene.start('play');
+                console.log("fullClick! , play");
+                this.scene.start('play');
             }
 
         }, this);
@@ -150,29 +211,46 @@ NT.Scenes.Lose = new Phaser.Class({
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
 
+        // console.log("seconds ",NT.Messages.savedTimeFormatted());
+        NT.Messages.timeText = this.add.text(40, NT.Globals.vertOneThird*2.8, 
+                                    NT.Messages.timeTextPrefix + NT.Messages.savedTimeFormatted() , 
+                                    { fontFamily: 'Anton', fontSize: '36px', fill: '#fff' });
+        NT.Messages.timeText.setStroke('#000', 5);        
 
-		this.add.text(NT.Globals.horizontalOffset, 80, 
+
+
+		var loseText = this.add.text(NT.Globals.horizontalOffset, 80, 
 	    	NT.Messages.loseTextMsg + "\n" + this.inText, 
 	    	{ align: 'center', 
-	    		font: '48px Impact', 
+	    		font: '48px Anton', 
 	    		fill: '#fff', 
 	    		wordWrap: {width: NT.Globals.gameWidth - (NT.Globals.horizontalOffset*2)} 
-	    	});	    this.add.text(60, 780, NT.Messages.restartTextMsg, { align: 'center', font: '48px Impact', fill: '#fff' });
+	    	});
+        loseText.setStroke('#000', 5);	    
+
+        var restartText = this.add.text(60, NT.Globals.vertOneThird*2.5, 
+            NT.Messages.restartTextMsg, 
+            { align: 'center', font: '48px Anton', fill: '#fff' });
+        restartText.setStroke('#000', 5);
 
 	    var fullClick = false;
 
-	    this.input.once('pointerup', function () {
+        this.input.once('pointerup', function () {
 
             fullClick = true;
-            console.log("click!");
+            console.log("pointerup , click!");
+            var deadlockTimer = this.time.delayedCall(NT.Globals.deadlockTimeDelay, 
+                                                    function(){this.scene.start('play')}, 
+                                                    [], this); 
 
         }, this);
 
         this.input.once('pointerdown', function () {
 
+            console.log("pointerdown , click!");
             if(fullClick){
                 console.log("fullClick! , play");
-            	this.scene.start('play');
+                this.scene.start('play');
             }
 
         }, this);
@@ -210,6 +288,8 @@ NT.Scenes.Play = new Phaser.Class({
         // this.load.spritesheet('player', 'img/naruto_run_quickie.png', { frameWidth: 110, frameHeight: 140 });
         this.load.spritesheet('player', 'img/pony_quickie.png', { frameWidth: 100, frameHeight: 200 });
         this.load.spritesheet('cactus', 'img/cactus_quick.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('guard', 'img/guard.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
     },
 
@@ -250,10 +330,6 @@ NT.Scenes.Play = new Phaser.Class({
         base = this.add.image(0, NT.Globals.vertOneThird, 'base');
         base.setDisplayOrigin(0);
 
-
-
-    	
-
     	console.log('globals',NT.Globals);
 					
 		
@@ -262,49 +338,19 @@ NT.Scenes.Play = new Phaser.Class({
         //  regardless of their place on the display list
         this.input.setTopOnly(false);
 
-        //  Events
-        // this.input.on('gameobjectdown', NT.Squares.squareDown);
-        // this.input.on('gameobjectout', NT.Squares.squareOut);
-        // this.input.on('gameobjectup', NT.Squares.squareUp);
-        
-	    //  Input Events	    
 
-	    // cursors = this.input.keyboard.addKeys('M', '1');
-	    // keyOne = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
-
-
-	    //  The score
-	    // NT.Messages.movesText = this.add.text(40, 40, 
-	    // 							NT.Messages.movesTextPrefix + NT.Globals.moves, 
-	    // 							{ fontFamily: 'Impact', fontSize: '48px', fill: '#fff' });
 	    NT.Messages.ticksText = this.add.text(40, 40, 
 	    							NT.Messages.ticksTextPrefix + NT.Globals.winGameTicks, 
-	    							{ fontFamily: 'Impact', fontSize: '48px', fill: '#fff' });
+	    							{ fontFamily: 'Anton', fontSize: '48px', fill: '#fff' });
+        NT.Messages.ticksText.setStroke('#000', 5);
 
-	    
-
-
-	 //    this.anims.create({
-		//     key: 'static',
-		//     frames: this.anims.generateFrameNumbers('overlays', { start: 0, end: 5 }),
-		//     frameRate: 10,
-		//     yoyo: true,
-		//     repeat: -1
-		// });
-
-	 //    this.anims.create({
-		//     key: 'wick',
-		//     frames: this.anims.generateFrameNumbers('bombs', { start: 0, end: 5 }),
-		//     frameRate: 10,
-		//     yoyo: true,
-		//     repeat: -1
-		// });
+	    NT.Globals.gameTimeStart = new Date().getTime();
+        NT.Messages.timeText = this.add.text(40, NT.Globals.vertOneThird*2.8, 
+                                    NT.Messages.timeTextPrefix + 0.0, 
+                                    { fontFamily: 'Anton', fontSize: '36px', fill: '#fff' });
+        NT.Messages.timeText.setStroke('#000', 5);
 
 
-
-        // NT.Squares.createGame(thisGame);
-
-        // this.time.events.repeat(Phaser.Timer.SECOND * Nt.Globals.lineDelay, 10, NT.Line.createLines(), this);
         // game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
         NT.Line.timedEvent = this.time.addEvent({ delay: NT.Line.lineDelay, 
                                                 callback: this.lineTimerEvent, 
@@ -327,13 +373,16 @@ NT.Scenes.Play = new Phaser.Class({
                                                 callbackScope: this, 
                                                 loop: true });
 
-        // NT.Player.speedBoostEvent = this.time.addEvent({ delay: NT.Deweys.boostTime, 
-        //                                         callback: function(){NT.Player.speedBoost = 1}, 
-        //                                         callbackScope: this});
+        NT.Guards.timedEvent = this.time.addEvent({ delay: NT.Guards.lineDelay, 
+                                                callback: this.lineTimerEventGuards, 
+                                                callbackScope: this, 
+                                                loop: true });
 
-        // NT.Player.speedBoostEvent = this.time.delayedCall(NT.Deweys.boostTime, 
-        //                                     function(){NT.Player.speedBoost = 1}, 
-        //                                     [], this);        
+        NT.Bullets.timedEvent = this.time.addEvent({ delay: NT.Bullets.lineDelay, 
+                                                callback: this.lineTimerEventBullets, 
+                                                callbackScope: this, 
+                                                loop: true });
+      
 
         // do once
         NT.Line.createLines();
@@ -342,6 +391,8 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Cactuses.createCactuses();
         NT.Barracades.createBarracades();
         NT.Deweys.createDeweys();
+        NT.Guards.createGuards();
+        NT.Bullets.createBullets();
 
 
         NT.Player.createPlayer();
@@ -395,16 +446,6 @@ NT.Scenes.Play = new Phaser.Class({
 
         });
 
-        // this.input.on('gameobjectdown', this.tappedSomething);
-        // this.input.on('gameobjectdown', function (ptr,obj)
-        // {
-        //     console.log("tapped:",obj);
-        //     obj.killAndHide();
-        // }, this);
-
-        // this.physics.add.overlap(NT.Player.player, NT.Barracades.barracades);
-        // this.physics.add.overlap(NT.Player.player, NT.Barracades.barracades, this.collideEnemy, null, this);
-        // this.physics.add.collide(NT.Player.player, NT.Barracades.barracades, this.collideEnemy, null, this);
 
 
     },
@@ -413,11 +454,16 @@ NT.Scenes.Play = new Phaser.Class({
     {
 
         // console.log( NT.Player.speedBoostEvent.getProgress().toString().substr(0, 4) );
+        var myTime = new Date().getTime() - NT.Globals.gameTimeStart;
+        NT.Messages.timeText.setText(NT.Messages.timeTextPrefix + NT.Messages.msToTime(myTime));
+
 
         NT.Line.updateLines();
         NT.Cactuses.updateCactuses();
         NT.Barracades.updateBarracades();
         NT.Deweys.updateDeweys();
+        NT.Guards.updateGuards();
+        NT.Bullets.updateBullets();
 
         NT.Player.updatePlayer();
 
@@ -433,18 +479,26 @@ NT.Scenes.Play = new Phaser.Class({
             if(barracade && barracade.nowFrame > 90 && barracade.nowFrame < 105){
                 // console.log('barracade.nowFrame:',barracade.nowFrame,NT.Player.player, barracade);
 
-                if (NT.Player.checkOverlap(barracade)){
+                if (!NT.Player.player || NT.Player.checkOverlap(barracade)){
                     // console.log('collide try:',barracade.nowFrame,NT.Player.player, barracade);
                     // thisGame.scene.start('lose', { id: 2, text:  "Collided with: "+barracade.name  });
-                    NT.Globals.shutdownScene('lose',  "Collided with: "+barracade.name );
+                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.name );
 
+                };
+            }
+        });
+
+        NT.Bullets.group.children.iterate(function (bullet) {
+            if(bullet && bullet.nowFrame > 50 && bullet.nowFrame < 105){
+                if (!NT.Player.player || NT.Player.checkOverlap(bullet)){
+                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.name );
                 };
             }
         });
 
         NT.Messages.ticksText.setText(NT.Messages.ticksTextPrefix + (NT.Globals.winGameTicks - NT.Player.runTicks));
         if(NT.Globals.winGameTicks < NT.Player.runTicks){
-            NT.Globals.shutdownScene('win',  "You YEETed the base!" );
+            NT.Globals.shutdownScene(myTime, 'win',  "You YEETed the base!" );
         }
 
 
@@ -454,19 +508,6 @@ NT.Scenes.Play = new Phaser.Class({
     {
         console.log("tapped:",obj);
         obj.killAndHide();
-        // var isReClick = false;
-        // console.log(this,NT.Squares);
-        // if(NT.Squares.getTint(obj) == NT.Squares.getTint(home)){
-        //     isReClick = true;
-        // }
-
-        // if( !isReClick ) {
-        //     var color = NT.Squares.getTint(obj);
-        //        sfxClick.play();
-        //        NT.Squares.checkHomeSides(color);
-        //     NT.Squares.setMoves(-1);
-        //     sfxClick.play();
-        // }
         
     },
 
@@ -488,6 +529,24 @@ NT.Scenes.Play = new Phaser.Class({
     lineTimerEventDeweys: function(){
         // workaround for timer
         NT.Deweys.addDewey();
+    }, 
+
+    lineTimerEventGuards: function(){
+        // workaround for timer
+        NT.Guards.addGuard();
+    }, 
+
+    lineTimerEventBullets: function(){
+        // workaround for timer
+        NT.Guards.group.children.iterate(function (guard) {
+            // console.log('guard test:',guard.nowFrame, guard);
+
+            if(guard && guard.nowFrame > 10 && guard.nowFrame < 105){
+                // console.log('guard bullet:',guard.nowFrame, guard);
+                NT.Bullets.addBullet(guard);
+            }
+        });
+        
     } 
 
 });

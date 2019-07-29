@@ -21,6 +21,9 @@ NT.Globals = {
 	squareHeight: 12,
 	verticalOpenSpace: 80,
 
+	deadlockTimeDelay: 1500,
+	gameTimeStart: 0,
+
 
 	colors: {
         desertLow:		"0xD49143",
@@ -45,10 +48,12 @@ NT.Globals = {
 	    return Math.random() < 0.5 ? left : right;
 	},
 
-	shutdownScene: function (type, message)
+	shutdownScene: function (time, type, message)
     {
         //  We need to clear keyboard events, or they'll stack up when the Menu is re-run
         thisGame.input.keyboard.shutdown();
+
+        NT.Messages.savedTime = time;
 
         NT.Line.group.children.each(line => {
         	line.destroy();
