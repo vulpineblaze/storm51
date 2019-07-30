@@ -33,7 +33,7 @@ NT.Globals = {
     },
 
 	level: 1,
-	winGameTicks: 1000,
+	winGameTicks: 2000,
 
 	randomNumber: function (min, max) {  
 	    var min = Math.ceil(min); 
@@ -46,6 +46,48 @@ NT.Globals = {
 		var left = NT.Globals.randomNumber(exLeft, inLeft);
 		var right = NT.Globals.randomNumber(inRight, exRight);
 	    return Math.random() < 0.5 ? left : right;
+	},
+
+	randomFloat: function (min, max) {
+        return Math.random() * (max - min) + min;
+	},
+
+
+	checkOverlap: function(spriteA, spriteB, softness=0) {
+		var retVal = false;
+		if(spriteA && spriteB){
+			var boundsA = spriteA.getBounds();
+		    var boundsB = spriteB.getBounds();
+
+		    // console.log("top bottom try", spriteB.name, boundsA.top, boundsB.bottom);
+
+		    if(boundsA.top < boundsB.bottom){
+		    	// console.log("left right try:",spriteB.name, boundsA.left, boundsA.right, boundsB.left);
+		    	// console.log("left right try:",spriteB.name, boundsA, boundsB);
+			    if(boundsB.left < boundsA.left 
+			    		&& Math.abs(boundsB.left - boundsA.left) > softness
+				    	&& boundsB.right > boundsA.left
+			    		&& Math.abs(boundsB.right - boundsA.left) > softness
+				    	){
+				    // console.log("overlap?", boundsA, boundsB);
+			    	retVal = true;
+			    }else if(boundsB.left < boundsA.right 
+			    		&& Math.abs(boundsB.left - boundsA.right) > softness
+				    	&& boundsB.right > boundsA.right
+			    		&& Math.abs(boundsB.right - boundsA.right) > softness
+				    	){
+				    // console.log("overlap?", boundsA, boundsB);
+			    	retVal = true;
+			    }
+		    }
+
+		    if(retVal){
+		    	console.log("collide:",spriteB.name, spriteB.nowFrame, boundsA, boundsB);
+		    }
+
+		}
+	    
+		return retVal;
 	},
 
 	shutdownScene: function (time, type, message)
@@ -65,8 +107,7 @@ NT.Globals = {
         	barracade.destroy();
 		});
 
-		NT.Line.refresh();
-		NT.Player.refresh();
+		
 
         thisGame.scene.start(type, { id: 2, text:  message  });
     } 

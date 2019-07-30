@@ -45,6 +45,8 @@ NT.Line = {
 
 
 	createLines: function (){
+		NT.Line.refresh();
+
 		NT.Line.group = thisGame.add.group({
 	        defaultKey: 'line',
 	        maxSize: 20,

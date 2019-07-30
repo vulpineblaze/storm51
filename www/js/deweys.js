@@ -10,7 +10,7 @@ NT.Deweys = {
 	group: 0,
 
 	spriteScale: 0.5,
-	spriteAngle: -45,
+	spriteAngle: -5,
 
 	frameMult: 1.03,
 

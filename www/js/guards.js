@@ -10,7 +10,7 @@ NT.Guards = {
 	group: 0,
 
 	spriteScale: 4,
-	spriteAngle: -45,
+	spriteAngle: -5,
 
 	frameMult: 1.03,
 

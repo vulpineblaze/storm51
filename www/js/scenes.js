@@ -314,7 +314,7 @@ NT.Scenes.Play = new Phaser.Class({
         var roadTriangle = new Phaser.Geom.Triangle(NT.Globals.horzCenter, NT.Globals.vertOneThird,   
                                 0, NT.Globals.gameHeight, 
                                 NT.Globals.gameWidth, NT.Globals.gameHeight);
-        var roadBumperTriangle = new Phaser.Geom.Triangle(NT.Globals.horzCenter, NT.Globals.vertOneThird+10,   
+        var roadBumperTriangle = new Phaser.Geom.Triangle(NT.Globals.horzCenter, NT.Globals.vertOneThird,   
                                 -50, NT.Globals.gameHeight, 
                                 NT.Globals.gameWidth+50, NT.Globals.gameHeight);
 
@@ -381,7 +381,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Bullets.timedEvent = this.time.addEvent({ delay: NT.Bullets.lineDelay, 
                                                 callback: this.lineTimerEventBullets, 
                                                 callbackScope: this, 
-                                                loop: true });
+                                                loop: false });
       
 
         // do once
@@ -453,6 +453,9 @@ NT.Scenes.Play = new Phaser.Class({
     update: function ()
     {
 
+        // console.log("update delay", NT.Bullets.lineDelay, NT.Bullets.timedEvent.delay, NT.Bullets.timedEvent);
+
+
         // console.log( NT.Player.speedBoostEvent.getProgress().toString().substr(0, 4) );
         var myTime = new Date().getTime() - NT.Globals.gameTimeStart;
         NT.Messages.timeText.setText(NT.Messages.timeTextPrefix + NT.Messages.msToTime(myTime));
@@ -479,7 +482,7 @@ NT.Scenes.Play = new Phaser.Class({
             if(barracade && barracade.nowFrame > 90 && barracade.nowFrame < 105){
                 // console.log('barracade.nowFrame:',barracade.nowFrame,NT.Player.player, barracade);
 
-                if (!NT.Player.player || NT.Player.checkOverlap(barracade)){
+                if (NT.Globals.checkOverlap(NT.Player.player, barracade, NT.Barracades.collideSoftness)){
                     // console.log('collide try:',barracade.nowFrame,NT.Player.player, barracade);
                     // thisGame.scene.start('lose', { id: 2, text:  "Collided with: "+barracade.name  });
                     NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.name );
@@ -489,14 +492,19 @@ NT.Scenes.Play = new Phaser.Class({
         });
 
         NT.Bullets.group.children.iterate(function (bullet) {
-            if(bullet && bullet.nowFrame > 50 && bullet.nowFrame < 105){
-                if (!NT.Player.player || NT.Player.checkOverlap(bullet)){
+            if(bullet && bullet.active){
+                var isOverlap = false;
+                if (NT.Globals.checkOverlap(NT.Player.player, bullet, 0)){
+                    console.log("bullet collide", bullet.nowFrame, bullet);
+                    isOverlap = true;
+                }
+                if(isOverlap && bullet.nowFrame > 60 && bullet.nowFrame < 90){
                     NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.name );
-                };
+                }
             }
         });
 
-        NT.Messages.ticksText.setText(NT.Messages.ticksTextPrefix + (NT.Globals.winGameTicks - NT.Player.runTicks));
+        NT.Messages.ticksText.setText(NT.Messages.ticksTextPrefix + Math.round(NT.Globals.winGameTicks - NT.Player.runTicks));
         if(NT.Globals.winGameTicks < NT.Player.runTicks){
             NT.Globals.shutdownScene(myTime, 'win',  "You YEETed the base!" );
         }
@@ -538,14 +546,25 @@ NT.Scenes.Play = new Phaser.Class({
 
     lineTimerEventBullets: function(){
         // workaround for timer
+        // NT.Bullets.timedEvent.reset({delay: NT.Bullets.lineDelay + NT.Globals.randomNumber(-50,50)});
+        // console.log(NT.Bullets.lineDelay, NT.Bullets.timedEvent.delay, NT.Bullets.timedEvent);
         NT.Guards.group.children.iterate(function (guard) {
             // console.log('guard test:',guard.nowFrame, guard);
 
-            if(guard && guard.nowFrame > 10 && guard.nowFrame < 105){
+            if(guard && guard.active && guard.nowFrame > 1 && guard.nowFrame < 40){
                 // console.log('guard bullet:',guard.nowFrame, guard);
                 NT.Bullets.addBullet(guard);
             }
         });
+
+        NT.Bullets.timedEvent = this.time.addEvent({ delay: NT.Bullets.lineDelay + NT.Globals.randomNumber(-50,50), 
+                                                callback: this.lineTimerEventBullets, 
+                                                callbackScope: this, 
+                                                loop: false });
+
+        // NT.Bullets.timedEvent = this.time.delayedCall(NT.Bullets.lineDelay + NT.Globals.randomNumber(-50,50), 
+        //                                             this.lineTimerEventBullets, 
+        //                                             [], this); 
         
     } 
 
