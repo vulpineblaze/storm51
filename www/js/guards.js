@@ -4,56 +4,29 @@ if(NT === undefined) {
 
 NT.Guards = {
 	
-	guards: [],
 	startFrame: 1,
 	startTick: 1,
-	group: 0,
 
 	spriteScale: 4,
 	spriteAngle: -5,
 
-	frameMult: 1.03,
-
-	guardTotalCount: 0,
 	guardMaxTotal: 10,
 
 	lineDelay: 1000,
-	timedEvent: "",
 
 	thresholdOuter: 3000,
 	thresholdInner: 300,
+	relativeDepth: 10,
 
-	updateGuards: function(){
-
-		NT.Guards.group.children.iterate(function (guard) {
-			if(guard.visible){
-				// console.log("update: ",guard.visible, guard.name,guard);
-			}
-			
-			guard.nowTick *= NT.Guards.frameMult * NT.Player.speedBoost;
-			guard.nowFrame *= NT.Guards.frameMult * NT.Player.speedBoost;
-
-			var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
-			var frameOffset = (guard.nowFrame/100);
-			var angle = NT.Guards.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
-
-			var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (guard.uniqueHorzOffset * frameOffset);
-			var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-			guard.setScale(frameOffset * NT.Guards.spriteScale);
-			guard.setAngle(angle);
-			guard.setPosition(x,y);
-
-			if(guard.nowFrame >= 100){
-				NT.Guards.group.killAndHide(guard);
-			}
-
-	    });
-
+	refresh: function (){
+		NT.Guards.frameMult = NT.Globals.baseFrameMult;
+		NT.Guards.timedEvent;
 	},
 
 
-
 	createGuards: function (){
+		NT.Guards.refresh();
+
 		var guardShootAnimation = thisGame.anims.create({
 	        key: 'shoot',
 	        frames: thisGame.anims.generateFrameNumbers('guard',{
@@ -96,6 +69,42 @@ NT.Guards = {
 		console.log("Guards:",NT.Guards.group);
 	},
 
+
+	updateTicks: function(){
+		NT.Guards.group.children.iterate(function (guard) {
+			if(guard.active){
+				guard.nowTick *= NT.Guards.frameMult * NT.Player.speedBoost;
+				guard.nowFrame *= NT.Guards.frameMult * NT.Player.speedBoost;
+			}
+		});
+	},
+	
+	updateGuards: function(){
+
+		NT.Guards.group.children.iterate(function (guard) {
+			if(guard.visible){
+				// console.log("update: ",guard.visible, guard.name,guard);
+			}
+			if(guard.active){
+				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
+				var frameOffset = (guard.nowFrame/100);
+				var angle = NT.Guards.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
+
+				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (guard.uniqueHorzOffset * frameOffset);
+				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
+				guard.setScale(frameOffset * NT.Guards.spriteScale);
+				guard.setAngle(angle);
+				guard.setPosition(x,y);
+				guard.setDepth(NT.Guards.relativeDepth + guard.nowFrame);
+
+				if(guard.nowFrame >= 100){
+					NT.Guards.group.killAndHide(guard);
+				}
+			}
+	    });
+
+	},
+
 	activateGuard: function (guard) {
 	    guard
 	    .setActive(true)
@@ -108,6 +117,8 @@ NT.Guards = {
 
 		// guard.setFrame(NT.Globals.randomNumber(0,4));
 		    // .setTint(Phaser.Display.Color.RandomRGB().color)
+
+
 // 
 	},
 

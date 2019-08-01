@@ -24,6 +24,8 @@ NT.Globals = {
 	deadlockTimeDelay: 1500,
 	gameTimeStart: 0,
 
+	baseFrameMult: 1.029,
+
 
 	colors: {
         desertLow:		"0xD49143",
@@ -34,6 +36,7 @@ NT.Globals = {
 
 	level: 1,
 	winGameTicks: 2000,
+	millisPerTick: 30,
 
 	randomNumber: function (min, max) {  
 	    var min = Math.ceil(min); 
@@ -110,6 +113,18 @@ NT.Globals = {
 		
 
         thisGame.scene.start(type, { id: 2, text:  message  });
+    },
+
+    initKeys: function (thisGame){
+    	var i; 
+    	// keyString = "W,1";
+    	keyString = [87]; // W = 87
+		for(i=1;i<10;++i){
+			// keys = this.input.keyboard.addKeys(''+i);
+			keyString.push(48+i);
+		}    
+		NT.Globals.keys = thisGame.input.keyboard.addKeys(keyString);
+		console.log("keys",NT.Globals.keys,keyString);
     } 
 };
 
@@ -128,5 +143,8 @@ NT.Globals.verticalOffsetTop = NT.Globals.verticalOpenSpace + NT.Globals.vertica
 
 NT.Globals.vertOneThird = NT.Globals.gameHeight / 3;	
 NT.Globals.horzCenter = NT.Globals.gameWidth / 2;	
+
+
+
 
 

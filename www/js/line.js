@@ -4,44 +4,23 @@ if(NT === undefined) {
 
 NT.Line = {
 
-	lines: [],
 	startFrame: 1,
 	startTick: 1,
-	group: 0,
-
-	frameMult: 1.03,
 
 	lineTotalCount: 0,
 
 
-	lineDelay: 400,
-	timedEvent: "",
+	lineDelay: 10000,
+	// lineDelay: 400,
+	relativeDepth: 0,
+	
+	refresh: function (){
+		NT.Line.group;
+		NT.Line.frameMult = NT.Globals.baseFrameMult;
 
-	updateLines: function(){
-
-		NT.Line.group.children.iterate(function (line) {
-			// console.log("update: ", line.name,line);
-			line.nowTick *= NT.Line.frameMult * NT.Player.speedBoost;
-			line.nowFrame *= NT.Line.frameMult * NT.Player.speedBoost;
-
-			var horzOffset = NT.Globals.horzCenter - NT.Player.relativeHorz;
-			var frameOffset = (line.nowFrame/100);
-			var angle = -90 *  (horzOffset/NT.Globals.gameHeight);
-
-			var x = NT.Globals.horzCenter + (horzOffset * frameOffset);
-			var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-			line.setScale(frameOffset);
-			line.setAngle(angle);
-			line.setPosition(x,y);
-
-			if(line.nowFrame >= 100){
-				NT.Line.group.killAndHide(line);
-			}
-
-	    });
+		NT.Line.timedEvent;
 
 	},
-
 
 
 	createLines: function (){
@@ -58,34 +37,85 @@ NT.Line = {
 	            // console.log('Removed', line.name);
 	        }
 	    });
+	    NT.Line.frontloadLine();
 	},
 
-	activateLine: function (line) {
+	updateTicks: function(){
+		NT.Line.group.children.iterate(function (line) {
+			if(line.active){
+				line.nowTick *= NT.Line.frameMult * NT.Player.speedBoost;
+				line.nowFrame *= NT.Line.frameMult * NT.Player.speedBoost;
+			}
+		});
+	},
+
+	updateLines: function(){
+
+		NT.Line.group.children.iterate(function (line) {
+			if(line.active){
+				var horzOffset = NT.Globals.horzCenter - NT.Player.relativeHorz;
+				var frameOffset = (line.nowFrame/100);
+				var angle = -90 *  (horzOffset/NT.Globals.gameHeight);
+
+				var x = NT.Globals.horzCenter + (horzOffset * frameOffset);
+				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
+				line.setScale(30*frameOffset,0.15*frameOffset);
+				// line.setScale(frameOffset);
+				// line.setAngle(angle);
+				line.setPosition(x,y);
+				line.setDepth(NT.Line.relativeDepth + line.nowFrame);
+
+				NT.Messages.debugText.setStroke('#000', 5);
+				NT.Messages.debugText.setFontSize(20);
+				NT.Messages.debugText.setText(""+ Math.round(line.nowFrame, 1));
+				NT.Messages.debugText.setY(y);
+
+				if(line.nowFrame >= 100){
+					NT.Line.group.killAndHide(line);
+				}else if(line.nowFrame >= 70){
+					line.setTint(Phaser.Display.Color.RandomRGB().color);
+				}
+			}
+	    });
+
+	},
+
+	activateLine: function (line, forceFrame) {
 	    line
 	    .setActive(true)
-	    .setVisible(true);
+	    .setVisible(true)
+	    .clearTint();
 
-	    line.nowTick = NT.Line.startFrame;
-		line.nowFrame = NT.Line.startTick;
+	    if(forceFrame){
+			line.nowTick = forceFrame;
+			line.nowFrame = forceFrame;
+			console.log("line forceFrame", forceFrame, line);
+	    }else{
+	    	line.nowTick = NT.Line.startFrame;
+			line.nowFrame = NT.Line.startTick;
+	    }
+		    
 	},
 
-	addLine: function () {
+	addLine: function (forceFrame=0) {
 	    var line = NT.Line.group.get(NT.Globals.horzCenter, NT.Globals.vertOneThird);
 
 	    if (!line) return; // None free
 
-	    NT.Line.activateLine(line);
+	    NT.Line.activateLine(line,forceFrame);
 	},
 
-	refresh: function (){
-		NT.Line.lines = [];
-
-		NT.Line.group = 0;
-
-
-		NT.Line.lineTotalCount = 0;
-
-		NT.Line.timedEvent = "";
+	frontloadLine: function(){
+		var i,j=0;
+		var adj=0.09;
+		var forceFrame = NT.Line.lineDelay / NT.Globals.millisPerTick;
+		console.log("line outer forceFrame", forceFrame,NT.Line.lineDelay , NT.Globals.millisPerTick);
+		for(i=forceFrame;i<100;i+=forceFrame){
+			j+=1;
+	        // NT.Line.addLine(j*forceFrame*adj);
+		}
 	}
+
+	
 
 };

@@ -7,52 +7,29 @@ NT.Deweys = {
 	deweys: [],
 	startFrame: 1,
 	startTick: 1,
-	group: 0,
 
 	spriteScale: 0.5,
 	spriteAngle: -5,
 
-	frameMult: 1.03,
-
 	deweyTotalCount: 0,
 	deweyMaxTotal: 10,
+	deweySpeedBoost: 1.05,
 
 	lineDelay: 1000,
-	timedEvent: "",
 
 	threshold: 1000,
 
 	boostTime: 300,
+	relativeDepth: 10,
 
-	updateDeweys: function(){
-
-		NT.Deweys.group.children.iterate(function (dewey) {
-			// console.log("update: ", dewey.name,dewey);
-			dewey.nowTick *= NT.Deweys.frameMult * NT.Player.speedBoost;
-			dewey.nowFrame *= NT.Deweys.frameMult * NT.Player.speedBoost;
-
-			var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
-			var frameOffset = (dewey.nowFrame/100);
-			var angle = NT.Deweys.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
-
-			var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (dewey.uniqueHorzOffset * frameOffset);
-			var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-			dewey.setScale(frameOffset * NT.Deweys.spriteScale);
-			dewey.setAngle(angle);
-			dewey.setPosition(x,y);
-
-			if(dewey.nowFrame >= 100){
-				NT.Deweys.group.killAndHide(dewey);
-			}
-
-	    });
-
+	refresh: function (){
+		NT.Deweys.frameMult = NT.Globals.baseFrameMult;
+		NT.Deweys.timedEvent;
 	},
 
 
-
 	createDeweys: function (){
-
+		NT.Deweys.refresh();
 		NT.Deweys.group = thisGame.add.group({
 	        defaultKey: 'dewey',
 	        maxSize: NT.Deweys.deweyMaxTotal,
@@ -78,6 +55,39 @@ NT.Deweys = {
 	    // NT.Deweys.physicsBodyType = Phaser.Physics.ARCADE;
 	    
 		console.log("Deweys:",NT.Deweys.group);
+	},
+
+	updateTicks: function(){
+		NT.Deweys.group.children.iterate(function (dewey) {
+			if(dewey.active){
+				dewey.nowTick *= NT.Deweys.frameMult * NT.Player.speedBoost;
+				dewey.nowFrame *= NT.Deweys.frameMult * NT.Player.speedBoost;
+			}
+		});
+	},
+	
+	updateDeweys: function(){
+		
+		NT.Deweys.group.children.iterate(function (dewey) {
+			// console.log("update: ", dewey.name,dewey);
+			if(dewey.active){
+				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
+				var frameOffset = (dewey.nowFrame/100);
+				var angle = NT.Deweys.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
+
+				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (dewey.uniqueHorzOffset * frameOffset);
+				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
+				dewey.setScale(frameOffset * NT.Deweys.spriteScale);
+				dewey.setAngle(angle);
+				dewey.setPosition(x,y);
+				dewey.setDepth(NT.Deweys.relativeDepth + dewey.nowFrame);
+
+				if(dewey.nowFrame >= 100){
+					NT.Deweys.group.killAndHide(dewey);
+				}
+			}
+	    });
+
 	},
 
 	activateDewey: function (dewey) {
@@ -112,7 +122,7 @@ NT.Deweys = {
 				){
 				console.log("tapped:",dewey.name);
 				NT.Deweys.group.killAndHide(dewey);
-				NT.Player.speedBoost = 1.05;
+				NT.Player.speedBoost = NT.Deweys.deweySpeedBoost;
 		        NT.Player.speedBoostEvent = thisGame.time.delayedCall(NT.Deweys.boostTime, 
 		                                            function(){NT.Player.speedBoost = 1}, 
 		                                            [], this);    

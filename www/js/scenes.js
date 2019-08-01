@@ -78,7 +78,7 @@ NT.Scenes.Win = new Phaser.Class({
 	    this.load.image('black_center', 'img/background_win_lose.png');
         this.load.spritesheet('booty_shorts', 'img/booty_shorts.png', { frameWidth: 200, frameHeight: 200 });
         this.load.spritesheet('dancing_alien1', 'img/dancing_alien1.png', { frameWidth: 210, frameHeight: 630 });
-        this.load.spritesheet('hoops', 'img/hoops.png', { frameWidth: 200, frameHeight: 200 });
+        this.load.spritesheet('hoops', 'img/hoops.png', { frameWidth: 100, frameHeight: 100 });
 
     },
 
@@ -120,6 +120,8 @@ NT.Scenes.Win = new Phaser.Class({
         var hoopsAnimation = this.anims.create({
             key: 'hoops',
             frames: this.anims.generateFrameNumbers('hoops'),
+            // frames: thisGame.anims.generateFrameNumbers('hoops',{
+            //             frames:[0-3,16-21,4-6,8-14,22,24,25-30,32-38]}),
             frameRate: 12,
             repeat: -1
         });
@@ -127,6 +129,7 @@ NT.Scenes.Win = new Phaser.Class({
         var hoops = this.add.sprite(NT.Globals.horzCenter*1.5,
                                             NT.Globals.vertOneThird*1.5, 
                                             'hoops');
+        hoops.setScale(2);
         hoops.anims.play('hoops');
 
 
@@ -174,6 +177,7 @@ NT.Scenes.Win = new Phaser.Class({
             }
 
         }, this);
+
     }
 
 });
@@ -299,6 +303,7 @@ NT.Scenes.Play = new Phaser.Class({
         console.log("Play Scene create()");
         thisGame = this;
         NT.Globals.game = this;
+        NT.Globals.initKeys(this);
 	    //  A simple background for our game
         var rect = new Phaser.Geom.Rectangle(0, 
                                             NT.Globals.vertOneThird, 
@@ -328,6 +333,7 @@ NT.Scenes.Play = new Phaser.Class({
         mountain = this.add.image(0, 0, 'mountain');
         mountain.setDisplayOrigin(0);
         base = this.add.image(0, NT.Globals.vertOneThird, 'base');
+        base.y += -base.height + (NT.Globals.vertOneThird * 2 * 0.01);
         base.setDisplayOrigin(0);
 
     	console.log('globals',NT.Globals);
@@ -351,7 +357,17 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Messages.timeText.setStroke('#000', 5);
 
 
+        NT.Messages.debugText = this.add.text(300, NT.Globals.vertOneThird*2.8, 
+                                    NT.Messages.debugText + 0.0, 
+                                    { fontFamily: 'Anton', fontSize: '36px', fill: '#fff' });
+        NT.Messages.debugText.setStroke('#000', 2);
+
         // game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+        NT.Globals.masterTickTimer = this.time.addEvent({ delay: NT.Globals.millisPerTick, 
+                                                callback: this.tickTimerEvent, 
+                                                callbackScope: this, 
+                                                loop: true });
+
         NT.Line.timedEvent = this.time.addEvent({ delay: NT.Line.lineDelay, 
                                                 callback: this.lineTimerEvent, 
                                                 callbackScope: this, 
@@ -417,12 +433,20 @@ NT.Scenes.Play = new Phaser.Class({
 
             if (drag)
             {
-                if(pointer.x < pointer.downX){
-                    // left, center 300
-                    NT.Player.relativeHorz -= NT.Player.dragValue; 
-                }else{
-                    NT.Player.relativeHorz += NT.Player.dragValue; 
+                var dragMult = (pointer.x - pointer.downX) / NT.Globals.gameWidth;
+                var newRelativeHorz = NT.Player.dragValue * dragMult;
+                // 0 - 600, R to L   // 600 - 0, L to R
+                //  -/+ 600 / 600  ->  -1 to 1
+                //   -1 to -0.5  or 0.5 to 1
+                // dragMult *= 2;
+                if(newRelativeHorz < 0 && newRelativeHorz > -NT.Player.dragThreshold){
+                    newRelativeHorz = -NT.Player.dragThreshold;
+                }else if(dragMult < NT.Player.dragThreshold && newRelativeHorz > 0){
+                    newRelativeHorz = NT.Player.dragThreshold;
                 }
+
+
+                NT.Player.relativeHorz += newRelativeHorz;
 
                 var horzOffset = NT.Globals.horzCenter - NT.Player.relativeHorz;
 
@@ -479,7 +503,7 @@ NT.Scenes.Play = new Phaser.Class({
 
         // thisGame.physics.arcade.overlap(NT.Player.player, NT.Barracades.barracades, this.collideEnemy, null, this);
         NT.Barracades.group.children.iterate(function (barracade) {
-            if(barracade && barracade.nowFrame > 90 && barracade.nowFrame < 105){
+            if(barracade && barracade.nowFrame > 80 && barracade.nowFrame < 90){
                 // console.log('barracade.nowFrame:',barracade.nowFrame,NT.Player.player, barracade);
 
                 if (NT.Globals.checkOverlap(NT.Player.player, barracade, NT.Barracades.collideSoftness)){
@@ -495,11 +519,11 @@ NT.Scenes.Play = new Phaser.Class({
             if(bullet && bullet.active){
                 var isOverlap = false;
                 if (NT.Globals.checkOverlap(NT.Player.player, bullet, 0)){
-                    console.log("bullet collide", bullet.nowFrame, bullet);
+                    console.log("bullet collide", bullet.nowFrame, bullet, NT.Player.player, NT.Player.relativeHorz);
                     isOverlap = true;
                 }
-                if(isOverlap && bullet.nowFrame > 60 && bullet.nowFrame < 90){
-                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.name );
+                if(isOverlap && bullet.nowFrame > 70 && bullet.nowFrame < 90){
+                    // NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.name );
                 }
             }
         });
@@ -508,6 +532,23 @@ NT.Scenes.Play = new Phaser.Class({
         if(NT.Globals.winGameTicks < NT.Player.runTicks){
             NT.Globals.shutdownScene(myTime, 'win',  "You YEETed the base!" );
         }
+
+
+        var i; // 48 = ZERO
+        for(i=1;i<10;++i){
+            // keys = this.input.keyboard.addKeys(''+i);
+            // keyString += ""+i;
+            // console.log("key checking",i,NT.Player.runTicks, NT.Globals.keys[i].isDown, NT.Globals.keys[i].isUp);
+            // console.log("key checking",i,NT.Player.runTicks, NT.Globals.keys[i].isDown, NT.Globals.keys);
+
+            if(NT.Globals.keys[i].isDown){
+                NT.Player.runTicks = 0.1 * i * NT.Globals.winGameTicks;
+                console.log("key press",i,NT.Player.runTicks);
+            }
+             // console.log("key press 48",NT.Globals.keys[""+i].keyCode,thisGame.input.keyboard.checkDown(NT.Globals.keys[i]));
+             // console.log("key press 48",NT.Globals.keys[""+i].keyCode,thisGame.input.keyboard.checkDown(NT.Globals.keys[i]));
+
+        } 
 
 
     },
@@ -519,6 +560,19 @@ NT.Scenes.Play = new Phaser.Class({
         
     },
 
+    tickTimerEvent: function(){
+        // workaround for timer
+        NT.Line.updateTicks();
+        NT.Cactuses.updateTicks();
+        NT.Barracades.updateTicks();
+        NT.Deweys.updateTicks();
+        NT.Guards.updateTicks();
+        NT.Bullets.updateTicks();
+
+        NT.Player.updateTicks();
+    }, 
+
+
     lineTimerEvent: function(){
         // workaround for timer
         NT.Line.addLine();
@@ -526,7 +580,11 @@ NT.Scenes.Play = new Phaser.Class({
 
     lineTimerEventCactuses: function(){
         // workaround for timer
-        NT.Cactuses.addCactus();
+        var i;
+        for(i=0;i<NT.Cactuses.addPerTimerEvent;++i){
+            NT.Cactuses.addCactus();
+        }
+        
     }, 
 
     lineTimerEventBarracades: function(){

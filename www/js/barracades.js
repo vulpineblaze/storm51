@@ -7,52 +7,26 @@ NT.Barracades = {
 	barracades: [],
 	startFrame: 1,
 	startTick: 1,
-	group: 0,
 
 	spriteScale: 0.5,
 	spriteAngle: -5,
-
-	frameMult: 1.03,
 
 	barracadeTotalCount: 0,
 	barracadeMaxTotal: 20,
 
 	lineDelay: 1000,
-	timedEvent: "",
 
 	threshold: 350,
 	collideSoftness: 30, 
+	relativeDepth: 10,
 
-
-	updateBarracades: function(){
-
-		NT.Barracades.group.children.iterate(function (barracade) {
-			// console.log("update: ", barracade.name,barracade);
-			barracade.nowTick *= NT.Barracades.frameMult * NT.Player.speedBoost;
-			barracade.nowFrame *= NT.Barracades.frameMult * NT.Player.speedBoost;
-
-			var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
-			var frameOffset = (barracade.nowFrame/100);
-			var angle = NT.Barracades.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
-
-			var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (barracade.uniqueHorzOffset * frameOffset);
-			var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-			barracade.setScale(frameOffset * NT.Barracades.spriteScale);
-			barracade.setAngle(angle);
-			barracade.setPosition(x,y);
-
-			if(barracade.nowFrame >= 100){
-				NT.Barracades.group.killAndHide(barracade);
-			}
-
-	    });
-
-	},
-
-
+	refresh: function (){
+		NT.Barracades.frameMult = NT.Globals.baseFrameMult;
+		NT.Barracades.timedEvent;
+	},		
 
 	createBarracades: function (){
-
+		NT.Barracades.refresh();
 		NT.Barracades.group = thisGame.add.group({
 	        defaultKey: 'barracade',
 	        maxSize: NT.Barracades.barracadeMaxTotal,
@@ -74,10 +48,49 @@ NT.Barracades = {
 		console.log("Barracades:",NT.Barracades.group);
 	},
 
+	updateTicks: function(){
+		NT.Barracades.group.children.iterate(function (barracade) {
+			if(barracade.active){
+				barracade.nowTick *= NT.Barracades.frameMult * NT.Player.speedBoost;
+				barracade.nowFrame *= NT.Barracades.frameMult * NT.Player.speedBoost;
+			}
+		});
+	},
+	
+	updateBarracades: function(){
+
+		NT.Barracades.group.children.iterate(function (barracade) {
+			// console.log("update: ", barracade.name,barracade);
+			if(barracade.active){
+				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
+				var frameOffset = (barracade.nowFrame/100);
+				var angle = NT.Barracades.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
+
+				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (barracade.uniqueHorzOffset * frameOffset);
+				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird ) * frameOffset + NT.Globals.vertOneThird;
+				barracade.setScale(frameOffset * NT.Barracades.spriteScale);
+				barracade.setAngle(angle);
+				barracade.setPosition(x,y);
+				barracade.setDepth(NT.Barracades.relativeDepth + barracade.nowFrame);
+
+				if(barracade.nowFrame >= 100){
+					NT.Barracades.group.killAndHide(barracade);
+				}
+				if(barracade.nowFrame >= 70){
+					barracade.setTint(Phaser.Display.Color.RandomRGB().color);
+					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
+				}
+			}
+	    });
+
+	},
+
+
 	activateBarracade: function (barracade) {
 	    barracade
 	    .setActive(true)
-	    .setVisible(true);
+	    .setVisible(true)
+	    .clearTint();
 
 	    barracade.nowTick = NT.Barracades.startFrame;
 		barracade.nowFrame = NT.Barracades.startTick;

@@ -7,10 +7,12 @@ NT.Player = {
 	refresh: function (){
 		// NT.Player.player = 0;
 		NT.Player.relativeHorz = 300;
-		NT.Player.dragValue = 5;
+		NT.Player.dragValue = 7;
+		NT.Player.dragThreshold = 3;
 		NT.Player.runTicks = 0;
 		NT.Player.speedBoost = 1; 
 		NT.Player.speedBoostEvent = "";
+		NT.Player.relativeDepth = 99;
 	},
 
 	createPlayer: function(){
@@ -25,18 +27,22 @@ NT.Player = {
 	    });
 
 		NT.Player.player = thisGame.physics.add.sprite(NT.Globals.horzCenter,NT.Globals.vertOneThird * 2.5, 'player');
-		NT.Player.player.setDepth(50);
+		NT.Player.player.setDepth(NT.Player.relativeDepth);
 		// NT.Player.player.anims.load('run');
 		NT.Player.player.anims.play('run');
 
 	},
 
-	updatePlayer: function(){
+	updateTicks: function(){
 		var tickMult = 1;
 		if(NT.Player.speedBoost > 1){
 			tickMult = NT.Player.speedBoost * 1.5;
 		}
 		NT.Player.runTicks += 1 * tickMult;
+	},
+
+	updatePlayer: function(){
+		
 	}
 
 	

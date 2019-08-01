@@ -10,7 +10,10 @@ NT.Messages = {
     levelTextPrefix :   "Level: ",
 
     ticksText:  "",
-    ticksTextPrefix :   "Till Base: ",
+    ticksTextPrefix :   "Distance: ",
+
+    debugText:  "",
+    debugTextPrefix :   "debug: ",
 
     timeText:  "",
     timeTextPrefix :   "Time: ",
@@ -20,6 +23,9 @@ NT.Messages = {
     winTextMsg:   "You Won!",
     loseTextMsg:   "You Lost!",
     restartTextMsg:   "Click to restart!",
+
+    textDepth: 200,
+
 
     savedTimeFormatted: function(){
         return NT.Messages.msToTime(NT.Messages.savedTime);
