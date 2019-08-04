@@ -30,12 +30,25 @@ NT.Scenes.Intro = new Phaser.Class({
     {
 	    // this.load.image('teal_border', 'img/backgrounds_teal_border.png');
 	    this.load.image('black_center', 'img/background_win_lose.png');
+
+        this.load.audio('emptySound', ['audio/emptySound.mp3','audio/emptySound.ogg']);
+        this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
+
+
     },
 
     create: function ()
     {
     	// var teal_border = this.add.image(0, 0, 'teal_border');
 	    // teal_border.setDisplayOrigin(0);
+        NT.Sounds.emptySound = this.sound.add('emptySound');
+        NT.Sounds.emptySound.play();
+
+
+        NT.Sounds.musicAudio = this.sound.add('musicAudio', {loop: true});
+        NT.Sounds.musicAudio.play();
+
+        
 
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
@@ -46,9 +59,16 @@ NT.Scenes.Intro = new Phaser.Class({
 
         this.input.once('pointerup', function () {
 
-            this.scene.start('play');
+            // this.scene.start('play');
 
         }, this);
+    },
+
+    update: function (){
+        if(NT.Sounds.musicAudio.isPlaying){
+            console.log("audio loaded!");
+            this.scene.start('play');
+        }
     }
 
 });
@@ -295,6 +315,9 @@ NT.Scenes.Play = new Phaser.Class({
         this.load.spritesheet('guard', 'img/guard.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
+        // this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
+        this.load.audio('brroww', 'audio/brroww.wav');
+
     },
 
 
@@ -304,6 +327,16 @@ NT.Scenes.Play = new Phaser.Class({
         thisGame = this;
         NT.Globals.game = this;
         NT.Globals.initKeys(this);
+
+        // var musicAudio = this.sound.add('musicAudio', {loop: true});
+        // // this.sound.play('musicAudio');
+        // // musicAudio.setLoop(true);
+        // musicAudio.play();
+
+        
+
+        
+
 	    //  A simple background for our game
         var rect = new Phaser.Geom.Rectangle(0, 
                                             NT.Globals.vertOneThird, 
@@ -478,7 +511,7 @@ NT.Scenes.Play = new Phaser.Class({
     {
 
         // console.log("update delay", NT.Bullets.lineDelay, NT.Bullets.timedEvent.delay, NT.Bullets.timedEvent);
-
+        
 
         // console.log( NT.Player.speedBoostEvent.getProgress().toString().substr(0, 4) );
         var myTime = new Date().getTime() - NT.Globals.gameTimeStart;
