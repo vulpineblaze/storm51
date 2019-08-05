@@ -40,11 +40,11 @@ NT.Cactuses = {
 	            // console.log('Removed', cactus.name);
 	        }
 	    });
-	    NT.Cactuses.group.createMultiple({
-	        active: false,
-	        key: NT.Cactuses.group.defaultKey,
-	        repeat: NT.Cactuses.group.maxSize - 1
-	    });
+	    // NT.Cactuses.group.createMultiple({
+	    //     active: false,
+	    //     key: NT.Cactuses.group.defaultKey,
+	    //     repeat: NT.Cactuses.group.maxSize - 1
+	    // });
 		NT.Cactuses.frontloadCactus();
 
 		console.log("Cactuses:",NT.Cactuses.group);
@@ -70,7 +70,8 @@ NT.Cactuses = {
 				var angle = -90 *  (horzOffset/NT.Globals.gameHeight);
 
 				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (cactus.uniqueHorzOffset * frameOffset);
-				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
+				var y = NT.Globals.vertOneThird 
+						+ (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset;
 				cactus.setScale(frameOffset * 2);
 				cactus.setAngle(angle);
 				cactus.setPosition(x,y);
@@ -79,12 +80,21 @@ NT.Cactuses = {
 				if(cactus.nowFrame >= 100){
 					NT.Cactuses.group.killAndHide(cactus);
 				}
+
+				var center = cactus.getCenter();
+				if(center.x < 0
+						|| center.x > NT.Globals.gameWidth
+						|| center.y < 0
+						|| center.y > NT.Globals.gameHeight
+						){
+					NT.Cactuses.group.killAndHide(cactus);
+				}
 			}
 	    });
 
 	},
 
-	activateCactus: function (cactus, forceFrame) {
+	activateCactus: function (cactus, forceFrame=0) {
 	    cactus
 	    .setActive(true)
 	    .setVisible(true);
@@ -114,16 +124,23 @@ NT.Cactuses = {
 
 	frontloadCactus: function(){
 		var i,j;
-		var forceFrame = NT.Cactuses.lineDelay / NT.Globals.millisPerTick;
+		var forceFrame = (NT.Cactuses.lineDelay / NT.Globals.millisPerTick);
+		var emulatedFrame = 1;
 		// console.log("loop forceFrame", ticksRatio,NT.Cactuses.lineDelay , NT.Globals.millisPerTick);
 		for(i=forceFrame;i<100;i+=forceFrame){
+			emulatedFrame *= NT.Cactuses.frameMult;
+
 			// console.log("forceframe i",i);
-			for(j=0;j<NT.Cactuses.addPerTimerEvent*10;++j){
-	    		// console.log("loop forceFrame", i,forceF, forceFrame, cactus.x, cactus.yrame);
-	            NT.Cactuses.addCactus(i*forceFrame);
+			for(j=0;j<NT.Cactuses.addPerTimerEvent*1;++j){
+	    		// console.log("loop forceFrame", i, forceFrame,emulatedFrame);
+	    		if(emulatedFrame > 100){
+	    			return;
+	    		}
+	            NT.Cactuses.addCactus(emulatedFrame);
 	        }
+	        // NT.Cactuses.updateCactuses();
 		}
-		NT.Cactuses.updateCactuses();
+		// NT.Cactuses.updateCactuses();
 	}
 
 

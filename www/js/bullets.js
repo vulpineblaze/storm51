@@ -104,7 +104,7 @@ NT.Bullets = {
 				}
 				if(bullet.nowFrame >= 70){
 					bullet.setTint(Phaser.Display.Color.RandomRGB().color);
-					console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
+					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 			}
 	    });

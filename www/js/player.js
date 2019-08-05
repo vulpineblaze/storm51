@@ -7,8 +7,8 @@ NT.Player = {
 	refresh: function (){
 		// NT.Player.player = 0;
 		NT.Player.relativeHorz = 300;
-		NT.Player.dragValue = 7;
-		NT.Player.dragThreshold = 3;
+		NT.Player.dragValue = 9;
+		NT.Player.dragThreshold = 5;
 		NT.Player.runTicks = 0;
 		NT.Player.speedBoost = 1; 
 		NT.Player.speedBoostEvent = "";
@@ -28,8 +28,10 @@ NT.Player = {
 
 		NT.Player.player = thisGame.physics.add.sprite(NT.Globals.horzCenter,NT.Globals.vertOneThird * 2.5, 'player');
 		NT.Player.player.setDepth(NT.Player.relativeDepth);
+		NT.Player.player.setInteractive();
 		// NT.Player.player.anims.load('run');
 		NT.Player.player.anims.play('run');
+		thisGame.input.setDraggable(NT.Player.player);
 
 	},
 

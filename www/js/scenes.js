@@ -338,13 +338,13 @@ NT.Scenes.Play = new Phaser.Class({
         
 
 	    //  A simple background for our game
-        var rect = new Phaser.Geom.Rectangle(0, 
+        NT.Globals.backgroundRect = new Phaser.Geom.Rectangle(0, 
                                             NT.Globals.vertOneThird, 
                                             NT.Globals.gameWidth, 
                                             NT.Globals.gameHeight);
-        var graphics = this.add.graphics({ fillStyle: { color: NT.Globals.colors.desertLow } });
-        graphics.fillRectShape﻿(rect);
-        graphics.setDepth(-50);
+        NT.Globals.backgroundGraphics = this.add.graphics({ fillStyle: { color: NT.Globals.colors.desertLow } });
+        NT.Globals.backgroundGraphics.fillRectShape﻿(NT.Globals.backgroundRect);
+        NT.Globals.backgroundGraphics.setDepth(-50);
 
         var roadTriangleGraphics = this.add.graphics({ fillStyle: { color: NT.Globals.colors.road } });
         var roadbumperTriangleGraphics = this.add.graphics({ fillStyle: { color: NT.Globals.colors.bumper } });
@@ -445,6 +445,17 @@ NT.Scenes.Play = new Phaser.Class({
 
 
         NT.Player.createPlayer();
+        
+
+        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+            // gameObject.x = dragX;
+            // gameObject.y = dragY;
+            // NT.Player.relativeHorz += newRelativeHorz;
+            console.log("draggable",pointer, gameObject, dragX, dragY);
+
+        });
+
 
         var drag = false;
 
@@ -474,12 +485,15 @@ NT.Scenes.Play = new Phaser.Class({
                 // dragMult *= 2;
                 if(newRelativeHorz < 0 && newRelativeHorz > -NT.Player.dragThreshold){
                     newRelativeHorz = -NT.Player.dragThreshold;
-                }else if(dragMult < NT.Player.dragThreshold && newRelativeHorz > 0){
+                }else if(newRelativeHorz < NT.Player.dragThreshold && newRelativeHorz > 0){
                     newRelativeHorz = NT.Player.dragThreshold;
                 }
 
 
                 NT.Player.relativeHorz += newRelativeHorz;
+
+                // console.log("drag pointer", pointer.x, pointer.downX, dragMult, newRelativeHorz);
+
 
                 var horzOffset = NT.Globals.horzCenter - NT.Player.relativeHorz;
 
@@ -583,7 +597,7 @@ NT.Scenes.Play = new Phaser.Class({
 
         } 
 
-
+       
     },
 
     tappedSomething: function (ptr,obj)
@@ -603,6 +617,8 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Bullets.updateTicks();
 
         NT.Player.updateTicks();
+
+        this.tickBasedBackgroundColor();
     }, 
 
 
@@ -657,7 +673,33 @@ NT.Scenes.Play = new Phaser.Class({
         //                                             this.lineTimerEventBullets, 
         //                                             [], this); 
         
-    } 
+    }, 
+
+    tickBasedBackgroundColor: function(){
+        var colorDiff = parseInt(NT.Globals.colors.desertHigh ) 
+                        - parseInt(NT.Globals.colors.desertLow );
+        var colorDiffRed = colorDiff.toString(16).substring(0,2);
+        var colorDiffGreen = colorDiff.toString(16).substring(2,4);
+        var colorDiffBlue = colorDiff.toString(16).substring(4,6);
+
+        var timeFactor = (NT.Player.runTicks / NT.Globals.winGameTicks); // 0 up to 1
+
+        var ourNewColor = parseInt(colorDiffRed) * timeFactor
+                        + parseInt(colorDiffGreen) * timeFactor
+                        + parseInt(colorDiffBlue) * timeFactor; 
+
+        var tickBasedColor = parseInt(NT.Globals.colors.desertLow )
+                            // + colorDiff ;
+                            + ourNewColor ;
+
+        // console.log("tick based color:", colorDiff.toString(16)
+        //                         ,(NT.Player.runTicks / NT.Globals.winGameTicks)
+        //                         , tickBasedColor.toString(16));
+        if(NT.Player.runTicks % 10 > 8){
+            NT.Globals.backgroundGraphics.fillStyle( tickBasedColor );
+            NT.Globals.backgroundGraphics.fillRectShape﻿(NT.Globals.backgroundRect);
+        }
+    }
 
 });
 
