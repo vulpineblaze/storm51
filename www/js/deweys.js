@@ -15,7 +15,7 @@ NT.Deweys = {
 	deweyMaxTotal: 10,
 	deweySpeedBoost: 1.05,
 
-	lineDelay: 1000,
+	lineDelay: 1100,
 
 	threshold: 1000,
 
@@ -35,33 +35,23 @@ NT.Deweys = {
 	        maxSize: NT.Deweys.deweyMaxTotal,
 	        createCallback: function (dewey) {
 	            dewey.setName('dewey' + this.getLength());
-	            dewey.uniqueHorzOffset = NT.Globals.randomNumber(
-	            				-NT.Deweys.threshold,
-	            				NT.Deweys.threshold);
-	   //          dewey.wasTapped = () => {
-				//   if (number < 0) {
-				//     return -number;
-				//   }
-				//   return number;
-				// }
-	            console.log('Created', dewey.name);
 	        },
 	        removeCallback: function (dewey) {
-	            console.log('Removed', dewey.name);
 	        }
 	    });
-
-	    // NT.Deweys.enableBody = true;
-	    // NT.Deweys.physicsBodyType = Phaser.Physics.ARCADE;
 	    
-		console.log("Deweys:",NT.Deweys.group);
+		// console.log("Deweys:",NT.Deweys.group);
 	},
 
 	updateTicks: function(){
-		NT.Deweys.group.children.iterate(function (dewey) {
-			if(dewey.active){
-				dewey.nowTick *= NT.Deweys.frameMult * NT.Player.speedBoost;
-				dewey.nowFrame *= NT.Deweys.frameMult * NT.Player.speedBoost;
+		var percentComplete = 1 - (NT.Globals.winGameTicks - NT.Player.runTicks)/NT.Globals.winGameTicks;
+		var levelAcelAdded =  NT.Globals.progressFrameMultAdded * percentComplete;
+		// console.log("levelAcel" , levelAcelAdded);
+
+		NT.Deweys.group.children.iterate(function (child) {
+			if(child.active){
+				child.nowTick *= (NT.Deweys.frameMult + levelAcelAdded) * NT.Player.speedBoost;
+				child.nowFrame *= (NT.Deweys.frameMult + levelAcelAdded) * NT.Player.speedBoost;
 			}
 		});
 	},
@@ -97,9 +87,10 @@ NT.Deweys = {
 
 	    dewey.nowTick = NT.Deweys.startFrame;
 		dewey.nowFrame = NT.Deweys.startTick;
-		// dewey.setDepth(50);
 
-		// dewey.setFrame(NT.Globals.randomNumber(0,4));
+		dewey.uniqueHorzOffset = NT.Globals.randomNumber(
+	            				-NT.Deweys.threshold,
+	            				NT.Deweys.threshold);
 	},
 
 	addDewey: function () {

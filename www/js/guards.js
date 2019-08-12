@@ -9,12 +9,15 @@ NT.Guards = {
 
 	spriteScale: 4,
 	spriteAngle: -5,
+	collideSoftness: 30, 
 
 	guardMaxTotal: 10,
 
-	lineDelay: 1000,
+	lineDelay: 3800,
+	rarity: 900,
+	spawnFrames: {start: 300, end: 600},
 
-	thresholdOuter: 3000,
+	thresholdOuter: 1000,
 	thresholdInner: 300,
 	relativeDepth: 10,
 
@@ -26,7 +29,9 @@ NT.Guards = {
 
 	createGuards: function (){
 		NT.Guards.refresh();
-
+		if(!NT.Globals.checkRarity(NT.Guards.rarity)){
+			console.log("no guards", NT.Guards.rarity);
+		}
 		var guardShootAnimation = thisGame.anims.create({
 	        key: 'shoot',
 	        frames: thisGame.anims.generateFrameNumbers('guard',{
@@ -38,17 +43,30 @@ NT.Guards = {
 	        frameRate: 10,
 	        repeat: -1
 	    });
+	    var guardDieAnimation = thisGame.anims.create({
+	        key: 'die',
+	        frames: thisGame.anims.generateFrameNumbers('guard',{
+	        			frames:[41,42,43,44]}),
+	        frameRate: 10,
+	        repeat: 0
+	    });
 		// console.log("guard frames", thisGame.anims.generateFrameNumbers('guard'));
 		NT.Guards.group = thisGame.add.group({
 	        defaultKey: 'guard',
 	        maxSize: NT.Guards.guardMaxTotal,
-	        createCallback: function (guard) {
-	            guard.setName('guard' + this.getLength());
-	            guard.uniqueHorzOffset = NT.Globals.randomThreshold(
-	            				-NT.Guards.thresholdOuter,
-	            				-NT.Guards.thresholdInner,
-	            				NT.Guards.thresholdInner,
-	            				NT.Guards.thresholdOuter);
+	        createCallback: function (child) {
+	            child.setName('guard' + this.getLength());
+	            child
+				    .setActive(false)
+				    .setVisible(false);
+
+				child.on('animationcomplete', function (animation, frame) {
+		            if(animation﻿.key === 'die'){
+		                // console.log("anim played die", child,animation, frame);
+		                NT.Guards.group.killAndHide(child)
+		            }
+		        }, this);
+	            
 	            // guard.anims.play('shoot');
 	            // console.log('Created', guard.name);
 	        },
@@ -58,50 +76,63 @@ NT.Guards = {
 	    });
 
 	    NT.Guards.group.createMultiple({
+	        visible: false,
 	        active: false,
 	        key: NT.Guards.group.defaultKey,
 	        repeat: NT.Guards.group.maxSize - 1
 	    });
-		// NT.Guards.group.playAnimation('shoot');
-	    // NT.Guards.enableBody = true;
-	    // NT.Guards.physicsBodyType = Phaser.Physics.ARCADE;
 	    
-		console.log("Guards:",NT.Guards.group);
+		// console.log("Guards:",NT.Guards.group);
 	},
 
 
 	updateTicks: function(){
-		NT.Guards.group.children.iterate(function (guard) {
-			if(guard.active){
-				guard.nowTick *= NT.Guards.frameMult * NT.Player.speedBoost;
-				guard.nowFrame *= NT.Guards.frameMult * NT.Player.speedBoost;
+		var percentComplete = 1 - (NT.Globals.winGameTicks - NT.Player.runTicks)/NT.Globals.winGameTicks;
+		var levelAcelAdded =  NT.Globals.progressFrameMultAdded * percentComplete;
+		// console.log("levelAcel" , levelAcelAdded);
+
+		NT.Guards.group.children.iterate(function (child) {
+			if(child.active){
+				child.nowTick *= (NT.Guards.frameMult + levelAcelAdded) * NT.Player.speedBoost;
+				child.nowFrame *= (NT.Guards.frameMult + levelAcelAdded) * NT.Player.speedBoost;
 			}
 		});
 	},
 	
 	updateGuards: function(){
 
-		NT.Guards.group.children.iterate(function (guard) {
-			if(guard.visible){
-				// console.log("update: ",guard.visible, guard.name,guard);
+		NT.Guards.group.children.iterate(function (child) {
+			if(child.visible){
+				// console.log("update visible: ",child.active, child.x, child.name,child);
 			}
-			if(guard.active){
+			if(child.active){
 				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
-				var frameOffset = (guard.nowFrame/100);
+				var frameOffset = (child.nowFrame/100);
 				var angle = NT.Guards.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
 
-				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (guard.uniqueHorzOffset * frameOffset);
-				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-				guard.setScale(frameOffset * NT.Guards.spriteScale);
-				guard.setAngle(angle);
-				guard.setPosition(x,y);
-				guard.setDepth(NT.Guards.relativeDepth + guard.nowFrame);
+				var elevation = -(NT.Player.player.height - child.height) * frameOffset;
 
-				if(guard.nowFrame >= 100){
-					NT.Guards.group.killAndHide(guard);
+
+				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (child.uniqueHorzOffset * frameOffset);
+				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset 
+						+ elevation
+						+ NT.Globals.vertOneThird;
+				child.setScale(frameOffset * NT.Guards.spriteScale);
+				child.setAngle(angle);
+				child.setPosition(x,y);
+				child.setDepth(NT.Guards.relativeDepth + child.nowFrame);
+
+				if(child.nowFrame >= 100){
+					NT.Guards.group.killAndHide(child);
+				}
+				if(child.nowFrame >= 50){
+					child.setTint(Phaser.Display.Color.RandomRGB().color);
+					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 			}
 	    });
+
+
 
 	},
 
@@ -109,10 +140,17 @@ NT.Guards = {
 	    guard
 	    .setActive(true)
 	    .setVisible(true)
+	    .clearTint()
 	    .play('shoot');
 
 	    guard.nowTick = NT.Guards.startFrame;
 		guard.nowFrame = NT.Guards.startTick;
+
+		guard.uniqueHorzOffset = NT.Globals.randomThreshold(
+	            				-NT.Guards.thresholdOuter,
+	            				-NT.Guards.thresholdInner,
+	            				NT.Guards.thresholdInner,
+	            				NT.Guards.thresholdOuter);
 		// guard.setDepth(50);
 
 		// guard.setFrame(NT.Globals.randomNumber(0,4));
@@ -123,6 +161,11 @@ NT.Guards = {
 	},
 
 	addGuard: function () {
+		if(NT.Player.runTicks < NT.Guards.spawnFrames.start 
+				|| NT.Player.runTicks > NT.Guards.spawnFrames.end){
+			return;
+		}
+
 	    var guard = NT.Guards.group.get(NT.Globals.horzCenter, NT.Globals.vertOneThird);
 
 	    if (!guard) return; // None free

@@ -8,6 +8,7 @@ NT.Cactuses = {
 	startTick: 1,
 
 	cactusMaxTotal: 3000,
+	spriteAngle: -5,
 
 	lineDelay: 15,
 	addPerTimerEvent: 5,
@@ -29,32 +30,25 @@ NT.Cactuses = {
 	        maxSize: NT.Cactuses.cactusMaxTotal,
 	        createCallback: function (cactus) {
 	            cactus.setName('cactus' + this.getLength());
-	            cactus.uniqueHorzOffset = NT.Globals.randomThreshold(
-	            				-NT.Cactuses.thresholdOuter,
-	            				-NT.Cactuses.thresholdInner,
-	            				NT.Cactuses.thresholdInner,
-	            				NT.Cactuses.thresholdOuter);
-	            // console.log('Created', cactus.name);
+	            
 	        },
 	        removeCallback: function (cactus) {
-	            // console.log('Removed', cactus.name);
 	        }
 	    });
-	    // NT.Cactuses.group.createMultiple({
-	    //     active: false,
-	    //     key: NT.Cactuses.group.defaultKey,
-	    //     repeat: NT.Cactuses.group.maxSize - 1
-	    // });
+
 		NT.Cactuses.frontloadCactus();
 
-		console.log("Cactuses:",NT.Cactuses.group);
+		// console.log("Cactuses:",NT.Cactuses.group);
 	},
 
 	updateTicks: function(){
+		var percentComplete = 1 - (NT.Globals.winGameTicks - NT.Player.runTicks)/NT.Globals.winGameTicks;
+		var levelAcelAdded =  NT.Globals.progressFrameMultAdded * percentComplete;
+
 		NT.Cactuses.group.children.iterate(function (cactus) {
 			if(cactus.active){
-				cactus.nowTick *= NT.Cactuses.frameMult * NT.Player.speedBoost;
-				cactus.nowFrame *= NT.Cactuses.frameMult * NT.Player.speedBoost;
+				cactus.nowTick *= (NT.Cactuses.frameMult + levelAcelAdded) * NT.Player.speedBoost;
+				cactus.nowFrame *= (NT.Cactuses.frameMult + levelAcelAdded) * NT.Player.speedBoost;
 			}
 		});
 	},
@@ -67,7 +61,7 @@ NT.Cactuses = {
 
 				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
 				var frameOffset = (cactus.nowFrame/100);
-				var angle = -90 *  (horzOffset/NT.Globals.gameHeight);
+				var angle = NT.Cactuses.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
 
 				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (cactus.uniqueHorzOffset * frameOffset);
 				var y = NT.Globals.vertOneThird 
@@ -99,10 +93,15 @@ NT.Cactuses = {
 	    .setActive(true)
 	    .setVisible(true);
 
+	    cactus.uniqueHorzOffset = NT.Globals.randomThreshold(
+	            				-NT.Cactuses.thresholdOuter,
+	            				-NT.Cactuses.thresholdInner,
+	            				NT.Cactuses.thresholdInner,
+	            				NT.Cactuses.thresholdOuter);
+
 	    if(forceFrame){
 	    	cactus.nowTick = forceFrame;
 			cactus.nowFrame = forceFrame;
-			// console.log("in forceFrame", forceFrame, cactus.x, cactus.y);
 	    }else{
 	    	cactus.nowTick = NT.Cactuses.startFrame;
 			cactus.nowFrame = NT.Cactuses.startTick;
@@ -110,15 +109,12 @@ NT.Cactuses = {
 	    
 		cactus.setFrame(NT.Globals.randomNumber(0,cactus.frame.texture.frameTotal-2));
 
-		// console.log("cactus frmaes",cactus.frame.texture);
-		// console.log("cactus frmaes",cactus.frame.texture.frameTotal);
 	},
 
 	addCactus: function (forceFrame=0) {
 	    var cactus = NT.Cactuses.group.get(NT.Globals.horzCenter, NT.Globals.vertOneThird);
 
 	    if (!cactus) return; // None free
-	    // console.log("addCactus forceFrame", forceFrame);
 	    NT.Cactuses.activateCactus(cactus, forceFrame);
 	},
 
@@ -126,21 +122,16 @@ NT.Cactuses = {
 		var i,j;
 		var forceFrame = (NT.Cactuses.lineDelay / NT.Globals.millisPerTick);
 		var emulatedFrame = 1;
-		// console.log("loop forceFrame", ticksRatio,NT.Cactuses.lineDelay , NT.Globals.millisPerTick);
 		for(i=forceFrame;i<100;i+=forceFrame){
 			emulatedFrame *= NT.Cactuses.frameMult;
 
-			// console.log("forceframe i",i);
 			for(j=0;j<NT.Cactuses.addPerTimerEvent*1;++j){
-	    		// console.log("loop forceFrame", i, forceFrame,emulatedFrame);
 	    		if(emulatedFrame > 100){
 	    			return;
 	    		}
 	            NT.Cactuses.addCactus(emulatedFrame);
 	        }
-	        // NT.Cactuses.updateCactuses();
 		}
-		// NT.Cactuses.updateCactuses();
 	}
 
 

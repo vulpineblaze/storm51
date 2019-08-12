@@ -8,11 +8,14 @@ NT.Line = {
 	startTick: 1,
 
 	lineTotalCount: 0,
+	spriteAngle: -75,
 
 
-	lineDelay: 10000,
-	// lineDelay: 400,
+	// lineDelay: 10000,
+	lineDelay: 400,
 	relativeDepth: 0,
+	maxTotal: 40,
+
 	
 	refresh: function (){
 		NT.Line.group;
@@ -28,7 +31,7 @@ NT.Line = {
 
 		NT.Line.group = thisGame.add.group({
 	        defaultKey: 'line',
-	        maxSize: 20,
+	        maxSize: NT.Line.maxTotal,
 	        createCallback: function (line) {
 	            line.setName('line' + this.getLength());
 	            // console.log('Created', line.name);
@@ -41,10 +44,14 @@ NT.Line = {
 	},
 
 	updateTicks: function(){
-		NT.Line.group.children.iterate(function (line) {
-			if(line.active){
-				line.nowTick *= NT.Line.frameMult * NT.Player.speedBoost;
-				line.nowFrame *= NT.Line.frameMult * NT.Player.speedBoost;
+		var percentComplete = 1 - (NT.Globals.winGameTicks - NT.Player.runTicks)/NT.Globals.winGameTicks;
+		var levelAcelAdded =  NT.Globals.progressFrameMultAdded * percentComplete;
+		// console.log("levelAcel" , levelAcelAdded);
+
+		NT.Line.group.children.iterate(function (child) {
+			if(child.active){
+				child.nowTick *= (NT.Line.frameMult + levelAcelAdded) * NT.Player.speedBoost;
+				child.nowFrame *= (NT.Line.frameMult + levelAcelAdded) * NT.Player.speedBoost;
 			}
 		});
 	},
@@ -55,20 +62,20 @@ NT.Line = {
 			if(line.active){
 				var horzOffset = NT.Globals.horzCenter - NT.Player.relativeHorz;
 				var frameOffset = (line.nowFrame/100);
-				var angle = -90 *  (horzOffset/NT.Globals.gameHeight);
+				var angle = NT.Line.spriteAngle *  (horzOffset/NT.Globals.gameHeight);
 
 				var x = NT.Globals.horzCenter + (horzOffset * frameOffset);
 				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
-				line.setScale(30*frameOffset,0.15*frameOffset);
-				// line.setScale(frameOffset);
-				// line.setAngle(angle);
+				// line.setScale(30*frameOffset,0.15*frameOffset);
+				line.setScale(frameOffset);
+				line.setAngle(angle);
 				line.setPosition(x,y);
 				line.setDepth(NT.Line.relativeDepth + line.nowFrame);
 
-				NT.Messages.debugText.setStroke('#000', 5);
-				NT.Messages.debugText.setFontSize(20);
-				NT.Messages.debugText.setText(""+ Math.round(line.nowFrame, 1));
-				NT.Messages.debugText.setY(y);
+				// NT.Messages.debugText.setStroke('#000', 5);
+				// NT.Messages.debugText.setFontSize(20);
+				// NT.Messages.debugText.setText(""+ Math.round(line.nowFrame, 1));
+				// NT.Messages.debugText.setY(y);
 
 				if(line.nowFrame >= 100){
 					NT.Line.group.killAndHide(line);
@@ -89,7 +96,7 @@ NT.Line = {
 	    if(forceFrame){
 			line.nowTick = forceFrame;
 			line.nowFrame = forceFrame;
-			console.log("line forceFrame", forceFrame, line);
+			// console.log("line forceFrame", forceFrame, line);
 	    }else{
 	    	line.nowTick = NT.Line.startFrame;
 			line.nowFrame = NT.Line.startTick;
@@ -106,13 +113,20 @@ NT.Line = {
 	},
 
 	frontloadLine: function(){
-		var i,j=0;
-		var adj=0.09;
-		var forceFrame = NT.Line.lineDelay / NT.Globals.millisPerTick;
-		console.log("line outer forceFrame", forceFrame,NT.Line.lineDelay , NT.Globals.millisPerTick);
-		for(i=forceFrame;i<100;i+=forceFrame){
-			j+=1;
-	        // NT.Line.addLine(j*forceFrame*adj);
+		var i,j;
+		var forceFrame = (NT.Line.lineDelay / NT.Globals.millisPerTick);
+		var emulatedFrame = 1;
+		// console.log("loop forceFrame", forceFrame);
+		for(i=forceFrame;i<150;i+=forceFrame){
+			for(j=0;j<forceFrame;++j){
+				emulatedFrame *= NT.Line.frameMult;
+			}
+			
+
+    		if(emulatedFrame > 150){
+    			return;
+    		}
+            NT.Line.addLine(emulatedFrame);
 		}
 	}
 

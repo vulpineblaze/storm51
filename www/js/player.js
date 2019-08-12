@@ -4,6 +4,11 @@ if(NT === undefined) {
 
 NT.Player = {
 
+	masterSheets: [
+	    { key: 'pony', path: 'img/pony_quickie_trim2_80x200.png', frameWidth: 80, frameHeight: 200 },
+	    { key: 'naruto', path: 'img/naruto_run_quickie.png', frameWidth: 110, frameHeight: 140 }
+	],
+
 	refresh: function (){
 		// NT.Player.player = 0;
 		NT.Player.relativeHorz = 300;
@@ -13,24 +18,29 @@ NT.Player = {
 		NT.Player.speedBoost = 1; 
 		NT.Player.speedBoostEvent = "";
 		NT.Player.relativeDepth = 99;
+		// NT.Player.thisSheet = 0;
 	},
 
 	createPlayer: function(){
 		NT.Player.refresh();
 
 		var playerAnimation = thisGame.anims.create({
-	        key: 'run',
-	        frames: thisGame.anims.generateFrameNumbers('player'),
+	        key: 'run'+NT.Player.thisSheet.key,
+	        frames: thisGame.anims.generateFrameNumbers(NT.Player.thisSheet.key),
 	        frameRate: 8,
 	        yoyo: true,
 	        repeat: -1
 	    });
+        console.log("player spirte", NT.Player.thisSheet.key);
 
-		NT.Player.player = thisGame.physics.add.sprite(NT.Globals.horzCenter,NT.Globals.vertOneThird * 2.5, 'player');
+		NT.Player.player = thisGame.physics.add.sprite(
+							NT.Globals.horzCenter,
+							NT.Globals.vertOneThird * 2.5, 
+							NT.Player.thisSheet.key);
 		NT.Player.player.setDepth(NT.Player.relativeDepth);
 		NT.Player.player.setInteractive();
 		// NT.Player.player.anims.load('run');
-		NT.Player.player.anims.play('run');
+		NT.Player.player.anims.play('run'+NT.Player.thisSheet.key);
 		thisGame.input.setDraggable(NT.Player.player);
 
 	},

@@ -25,6 +25,7 @@ function main(){
 	        noAudio: false
 	    },
 	    scene: [NT.Scenes.Intro, 
+	    	NT.Scenes.Select, 
 	    	NT.Scenes.Play, 
 	    	NT.Scenes.Win, 
 	    	NT.Scenes.Lose]

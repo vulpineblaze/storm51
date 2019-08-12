@@ -32,27 +32,20 @@ NT.Barracades = {
 	        maxSize: NT.Barracades.barracadeMaxTotal,
 	        createCallback: function (barracade) {
 	            barracade.setName('barracade' + this.getLength());
-	            barracade.uniqueHorzOffset = NT.Globals.randomNumber(
-	            				-NT.Barracades.threshold,
-	            				NT.Barracades.threshold);
-	            console.log('Created', barracade.name);
 	        },
 	        removeCallback: function (barracade) {
-	            console.log('Removed', barracade.name);
 	        }
 	    });
-
-	    // NT.Barracades.enableBody = true;
-	    // NT.Barracades.physicsBodyType = Phaser.Physics.ARCADE;
-	    
-		console.log("Barracades:",NT.Barracades.group);
 	},
 
 	updateTicks: function(){
+		var percentComplete = 1 - (NT.Globals.winGameTicks - NT.Player.runTicks)/NT.Globals.winGameTicks;
+		var levelAcelAdded =  NT.Globals.progressFrameMultAdded * percentComplete;
+
 		NT.Barracades.group.children.iterate(function (barracade) {
 			if(barracade.active){
-				barracade.nowTick *= NT.Barracades.frameMult * NT.Player.speedBoost;
-				barracade.nowFrame *= NT.Barracades.frameMult * NT.Player.speedBoost;
+				barracade.nowTick *= (NT.Barracades.frameMult + levelAcelAdded) * NT.Player.speedBoost;
+				barracade.nowFrame *= (NT.Barracades.frameMult + levelAcelAdded) * NT.Player.speedBoost;
 			}
 		});
 	},
@@ -60,7 +53,6 @@ NT.Barracades = {
 	updateBarracades: function(){
 
 		NT.Barracades.group.children.iterate(function (barracade) {
-			// console.log("update: ", barracade.name,barracade);
 			if(barracade.active){
 				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
 				var frameOffset = (barracade.nowFrame/100);
@@ -78,7 +70,6 @@ NT.Barracades = {
 				}
 				if(barracade.nowFrame >= 70){
 					barracade.setTint(Phaser.Display.Color.RandomRGB().color);
-					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 			}
 	    });
@@ -94,6 +85,10 @@ NT.Barracades = {
 
 	    barracade.nowTick = NT.Barracades.startFrame;
 		barracade.nowFrame = NT.Barracades.startTick;
+
+		barracade.uniqueHorzOffset = NT.Globals.randomNumber(
+	            				-NT.Barracades.threshold,
+	            				NT.Barracades.threshold);
 		// barracade.setDepth(50);
 
 		// barracade.setFrame(NT.Globals.randomNumber(0,4));

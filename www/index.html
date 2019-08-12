@@ -11,8 +11,8 @@
         }
     </style>
     <link rel="stylesheet" href="css/mystyles.css">
-    <div style="font-family:meme; position:absolute; left:-1000px; visibility:hidden;">.</div>
-
+<!--     <div style="font-family:meme; position:absolute; left:-1000px; visibility:hidden;">.</div>
+ -->
     <!-- <script src="cordova.js"></script> -->
 <!-- 
     <link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
@@ -46,7 +46,7 @@
     <SCRIPT SRC="js/scenes.js"></SCRIPT>
     <SCRIPT SRC="js/main.js"></SCRIPT> -->
     <script>
-        var v = Math.floor(Math.random() * 100);
+        var v = Math.floor(Math.random() * 9999);
         document.write('<script src="js/main.js?dev=' + v + '"\><\/script>');
         document.write('<script src="js/scenes.js?dev=' + v + '"\><\/script>');
         document.write('<script src="js/messages.js?dev=' + v + '"\><\/script>');
@@ -59,11 +59,16 @@
         document.write('<script src="js/guards.js?dev=' + v + '"\><\/script>');
         document.write('<script src="js/bullets.js?dev=' + v + '"\><\/script>');
         document.write('<script src="js/sounds.js?dev=' + v + '"\><\/script>');
+        document.write('<script src="js/signs.js?dev=' + v + '"\><\/script>');
     </script>
 
-
+    <p style="font-family: Anton"> </p>
     <script type="text/javascript">
         window.onload = main();
+        // document.fonts.onloadingdone = function (fontFaceSetEvent) {
+        //    // alert('onloadingdone we have ' + fontFaceSetEvent.fontfaces.length + ' font faces loaded');
+        //    window.onload = main();
+        // };
     </script>
     <div id="storm51"></div>
 </body>

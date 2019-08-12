@@ -25,11 +25,12 @@ NT.Globals = {
 	gameTimeStart: 0,
 
 	baseFrameMult: 1.029,
+	progressFrameMultAdded: 0.05,
 
 
 	colors: {
-        desertLow:		"0xD49143",
-        desertHigh:		"0xE8AF88",	
+        desertLow:		"0xd99d59",
+        desertHigh:		"0xdb7c3d",	
         road:		"0x857D74",	
         bumper:		"0xA29E9B"	
     },
@@ -114,6 +115,23 @@ NT.Globals = {
 
         thisGame.scene.start(type, { id: 2, text:  message  });
     },
+
+	
+	pauseGame: function(doPause=true){
+		// turn off all timers
+		NT.Globals.masterTickTimer.paused = doPause;
+        NT.Line.timedEvent.paused = doPause;
+        NT.Cactuses.timedEvent.paused = doPause;
+        NT.Barracades.timedEvent.paused = doPause;
+        NT.Deweys.timedEvent.paused = doPause;
+        NT.Guards.timedEvent.paused = doPause;
+        NT.Bullets.timedEvent.paused = doPause;
+	},
+
+	checkRarity: function (rarity){
+		return (rarity > NT.Globals.randomNumber(0, 1000));
+	},
+
 
     initKeys: function (thisGame){
     	var i; 
