@@ -474,6 +474,15 @@ NT.Scenes.Lose = new Phaser.Class({
             }
 
         }, this);
+
+        FB.ui({
+          method: 'share',
+          href: 'https://storm51game.com/',
+          hashtag: '#storm51game',
+          quote: NT.Messages.loseTextMsg + "\n" + this.inText,
+        }, function(response){});
+
+
     }
 
 });
@@ -515,6 +524,7 @@ NT.Scenes.Play = new Phaser.Class({
         // console.log("preload", NT.Player.thisSheet.key);
         this.load.spritesheet('cactus', 'img/cactus_quick.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('guard', 'img/guard.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('bird', 'img/bird_mini.png', { frameWidth: 80, frameHeight: 80 });
         this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
         // this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
@@ -649,6 +659,11 @@ NT.Scenes.Play = new Phaser.Class({
                                                 callback: this.lineTimerEventBullets, 
                                                 callbackScope: this, 
                                                 loop: false });
+
+        NT.Birds.timedEvent = this.time.addEvent({ delay: NT.Birds.lineDelay, 
+                                                callback: this.lineTimerEventBirds, 
+                                                callbackScope: this, 
+                                                loop: true });
       
 
         // do once
@@ -662,6 +677,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Bullets.createBullets();
 
         NT.Signs.createChildren();
+        NT.Birds.createChildren();
 
 
         NT.Player.createPlayer();
@@ -751,6 +767,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Bullets.updateBullets();
 
         NT.Signs.updateChildren();
+        NT.Birds.updateChildren();
 
         NT.Player.updatePlayer();
 
@@ -869,6 +886,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Bullets.updateTicks();
         
         NT.Signs.updateTicks();
+        NT.Birds.updateTicks();
 
 
         NT.Player.updateTicks();
@@ -933,6 +951,11 @@ NT.Scenes.Play = new Phaser.Class({
         //                                             this.lineTimerEventBullets, 
         //                                             [], this); 
         
+    }, 
+
+    lineTimerEventBirds: function(){
+        // workaround for timer
+        NT.Birds.addChild();
     }, 
 
     tickBasedBackgroundColor: function(){
