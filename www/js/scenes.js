@@ -525,13 +525,13 @@ NT.Scenes.Play = new Phaser.Class({
         this.load.spritesheet('cactus', 'img/cactus_quick.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('guard', 'img/guard.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('bird', 'img/bird_mini.png', { frameWidth: 80, frameHeight: 80 });
+        this.load.spritesheet('helo', 'img/helo_mini.png', { frameWidth: 300, frameHeight: 126 });
         this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
         // this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
         this.load.audio('brroww', 'audio/brroww.wav');
 
     },
-
 
     create: function ()
     {
@@ -678,6 +678,7 @@ NT.Scenes.Play = new Phaser.Class({
 
         NT.Signs.createChildren();
         NT.Birds.createChildren();
+        NT.Helos.createChildren();
 
 
         NT.Player.createPlayer();
@@ -768,6 +769,7 @@ NT.Scenes.Play = new Phaser.Class({
 
         NT.Signs.updateChildren();
         NT.Birds.updateChildren();
+        NT.Helos.updateChildren();
 
         NT.Player.updatePlayer();
 
@@ -887,6 +889,7 @@ NT.Scenes.Play = new Phaser.Class({
         
         NT.Signs.updateTicks();
         NT.Birds.updateTicks();
+        NT.Helos.updateTicks();
 
 
         NT.Player.updateTicks();
@@ -956,6 +959,7 @@ NT.Scenes.Play = new Phaser.Class({
     lineTimerEventBirds: function(){
         // workaround for timer
         NT.Birds.addChild();
+        NT.Helos.addChild();
     }, 
 
     tickBasedBackgroundColor: function(){
