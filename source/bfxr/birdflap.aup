@@ -1,0 +1,52 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="birdflap_data" version="1.3.0" audacityversion="2.2.2" sel0="0.0000000000" sel1="0.9571882086" vpos="0" h="0.0000000000" zoom="1128.2894736842" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags>
+		<tag name="Software" value="Lavf58.12.100"/>
+		<tag name="YEAR" value="20140807"/>
+		<tag name="major_brand" value="isom"/>
+		<tag name="minor_version" value="512"/>
+		<tag name="ARTIST" value="Distorted Room"/>
+		<tag name="compatible_brands" value="isomiso2mp41"/>
+		<tag name="TITLE" value="Bird Wings Sound - Flapping Wings Sound Effect"/>
+		<tag name="description" value="Flapping wings sound. The sound of a bird that seems to flap nervously his wings in a room. Original sound from the short Schizophrenia: https://goo.gl/gNScTN This sfx is excellent for Halloween! This is a Distorted Room&apos;s original sound effect.  Do you like this work? Please subscribe to the channel. Click here http://goo.gl/gYhU50 Thanks for subscribing and likes!  If you like this sound effect, you may also like: &#x266a; Radio Static Noise SFX: https://goo.gl/38Knpb &#x266a; Tv Static - White Noise SFX: https://goo.gl/wlhL8n &#x266a; Turning Handle - Valve Turn SFX: https://goo.gl/gpKgXe &#x266a; Clock Ticking SFX: https://goo.gl/RlmwwH &#x266a; Birds In The Wood SFX: https://goo.gl/8OCM23  Visit the author&apos;s blog for more info and materials. Click here https://goo.gl/yna5JE 2014.08.07 All rights reserved.  ------------------------------------------------------------- Take a look at the short films! &#x2714; Psychosis: https://goo.gl/SQf4Gn &#x2714; Insomnia: https://goo.gl/Rzy8Ez &#x2714; Daìdalos: https://goo.gl/ozwjk1 &#x2714; Schizophrenia: https://goo.gl/gNScTN  Here are the channel playlists! &#x2714; Short Films: https://goo.gl/IRG6au &#x2714; Horror and Halloween Sound Effects: https://goo.gl/vJ2fwi &#x2714; Other Sound Effects: https://goo.gl/KQuWW9 &#x2714; Creepy Recordings: https://goo.gl/KmJhY2 &#x2714; Soundtracks and Music: https://goo.gl/7hbTqw &#x2714; Sad Satan Sound Effects: https://goo.gl/2s0R3Y &#x2714; Trailers And More: https://goo.gl/MA8Eun &#x2714; Creepy World Trip: https://goo.gl/UHvAj9 -------------------------------------------------------------  Follow on: &#x25ba; Blog: https://goo.gl/yna5JE &#x25ba; Facebook: https://goo.gl/lBxLP2 &#x25ba; Twitter: https://goo.gl/vyVY58"/>
+		<tag name="comment" value="Flapping wings sound. The sound of a bird that seems to flap nervously his wings in a room. Original sound from the short Schizophrenia: https://goo.gl/gNScTN This sfx is excellent for Halloween! This is a Distorted Room&apos;s original sound effect.  Do you like this work? Please subscribe to the channel. Click here http://goo.gl/gYhU50 Thanks for subscribing and likes!  If you like this sound effect, you may also like: &#x266a; Radio Static Noise SFX: https://goo.gl/38Knpb &#x266a; Tv Static - White Noise SFX: https://goo.gl/wlhL8n &#x266a; Turning Handle - Valve Turn SFX: https://goo.gl/gpKgXe &#x266a; Clock Ticking SFX: https://goo.gl/RlmwwH &#x266a; Birds In The Wood SFX: https://goo.gl/8OCM23  Visit the author&apos;s blog for more info and materials. Click here https://goo.gl/yna5JE 2014.08.07 All rights reserved.  ------------------------------------------------------------- Take a look at the short films! &#x2714; Psychosis: https://goo.gl/SQf4Gn &#x2714; Insomnia: https://goo.gl/Rzy8Ez &#x2714; Daìdalos: https://goo.gl/ozwjk1 &#x2714; Schizophrenia: https://goo.gl/gNScTN  Here are the channel playlists! &#x2714; Short Films: https://goo.gl/IRG6au &#x2714; Horror and Halloween Sound Effects: https://goo.gl/vJ2fwi &#x2714; Other Sound Effects: https://goo.gl/KQuWW9 &#x2714; Creepy Recordings: https://goo.gl/KmJhY2 &#x2714; Soundtracks and Music: https://goo.gl/7hbTqw &#x2714; Sad Satan Sound Effects: https://goo.gl/2s0R3Y &#x2714; Trailers And More: https://goo.gl/MA8Eun &#x2714; Creepy World Trip: https://goo.gl/UHvAj9 -------------------------------------------------------------  Follow on: &#x25ba; Blog: https://goo.gl/yna5JE &#x25ba; Facebook: https://goo.gl/lBxLP2 &#x25ba; Twitter: https://goo.gl/vyVY58"/>
+		<tag name="purl" value="https://www.youtube.com/watch?v=yj4h8h1ik1M"/>
+	</tags>
+	<wavetrack name="Bird Wings Sound - Flapping Wings Sound Effect" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="42212">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808596.au" len="42212" min="-0.172417" max="0.118966" rms="0.020075"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+		<waveclip offset="0.95718821" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="609">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808886.au" len="609" min="-0.007986" max="0.010981" rms="0.001223"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Bird Wings Sound - Flapping Wings Sound Effect" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="42212">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808d29.au" len="42212" min="-0.145403" max="0.139569" rms="0.022437"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+		<waveclip offset="0.95718821" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="609">
+				<waveblock start="0">
+					<simpleblockfile filename="e080845b.au" len="609" min="-0.001666" max="0.039884" rms="0.006833"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

@@ -150,6 +150,7 @@ NT.Signs = {
 		NT.Messages.signText.setVisible(doPause);
 
 		if(doPause){
+			NT.Sounds.hitsign.play();
 			NT.Player.player.anims.pause();
 		}else{
 			NT.Player.player.anims.resume();

@@ -13,6 +13,7 @@ NT.Barracades = {
 
 	barracadeTotalCount: 0,
 	barracadeMaxTotal: 20,
+	publicName: "Barracade",
 
 	lineDelay: 1000,
 
@@ -30,8 +31,10 @@ NT.Barracades = {
 		NT.Barracades.group = thisGame.add.group({
 	        defaultKey: 'barracade',
 	        maxSize: NT.Barracades.barracadeMaxTotal,
-	        createCallback: function (barracade) {
-	            barracade.setName('barracade' + this.getLength());
+	        createCallback: function (child) {
+	            child.setName('barracade' + this.getLength());
+	            child.publicName = NT.Barracades.publicName;
+
 	        },
 	        removeCallback: function (barracade) {
 	        }

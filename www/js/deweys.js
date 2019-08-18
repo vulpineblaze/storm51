@@ -15,6 +15,8 @@ NT.Deweys = {
 	deweyMaxTotal: 10,
 	deweySpeedBoost: 1.05,
 
+	collideSoftness: 0,
+
 	lineDelay: 1100,
 
 	threshold: 1000,
@@ -68,12 +70,15 @@ NT.Deweys = {
 				var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (dewey.uniqueHorzOffset * frameOffset);
 				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset + NT.Globals.vertOneThird;
 				dewey.setScale(frameOffset * NT.Deweys.spriteScale);
+				dewey.clearTint();
 				dewey.setAngle(angle);
 				dewey.setPosition(x,y);
 				dewey.setDepth(NT.Deweys.relativeDepth + dewey.nowFrame);
 
 				if(dewey.nowFrame >= 100){
 					NT.Deweys.group.killAndHide(dewey);
+				}else if(dewey.nowFrame >= 70){
+					dewey.setTint(Phaser.Display.Color.RandomRGB().color);
 				}
 			}
 	    });
@@ -112,14 +117,19 @@ NT.Deweys = {
 				&& pointer.downY > bounds.top
 				){
 				console.log("tapped:",dewey.name);
-				NT.Deweys.group.killAndHide(dewey);
-				NT.Player.speedBoost = NT.Deweys.deweySpeedBoost;
-		        NT.Player.speedBoostEvent = thisGame.time.delayedCall(NT.Deweys.boostTime, 
-		                                            function(){NT.Player.speedBoost = 1}, 
-		                                            [], this);    
+				NT.Deweys.beenTapped(dewey);   
 			}
 
 	    });
+	},
+
+	beenTapped: function(child){
+		NT.Deweys.group.killAndHide(child);
+		NT.Player.speedBoost = NT.Deweys.deweySpeedBoost;
+        NT.Player.speedBoostEvent = thisGame.time.delayedCall(NT.Deweys.boostTime, 
+                                            function(){NT.Player.speedBoost = 1}, 
+                                            [], this); 
+        NT.Sounds.dewycollide.play();
 	}
 
 };

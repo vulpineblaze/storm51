@@ -11,6 +11,9 @@ NT.Bullets = {
 
 	firingHeightMult: 1.25,
 
+	publicName: "Bullet",
+
+
 	refresh: function (){
 		NT.Bullets.startFrame = 1;
 		NT.Bullets.startTick = 1;
@@ -40,12 +43,14 @@ NT.Bullets = {
 		NT.Bullets.group = thisGame.add.group({
 	        defaultKey: 'bullet',
 	        maxSize: NT.Bullets.bulletMaxTotal,
-	        createCallback: function (bullet) {
-	            bullet.setName('bullet' + this.getLength());
-	            bullet.uniqueHorzOffset = 0;
+	        createCallback: function (child) {
+	            child.setName('bullet' + this.getLength());
+	            child.uniqueHorzOffset = 0;
+	            child.publicName = NT.Bullets.publicName;
+
 	            // console.log('Created', bullet.name);
 	        },
-	        removeCallback: function (bullet) {
+	        removeCallback: function (child) {
 	            // console.log('Removed', bullet.name);
 	        }
 	    });
@@ -76,64 +81,69 @@ NT.Bullets = {
 	
 	updateBullets: function(){
 
-		NT.Bullets.group.children.iterate(function (bullet) {
-			if(bullet.active){
-				// console.log("update: ", bullet.name,bullet);
+		NT.Bullets.group.children.iterate(function (child) {
+			if(child.active){
+				// console.log("update: ", child.name,child);
 
 				// var x = NT.Globals.horzCenter + (horzOffset * frameOffset) + (barracade.uniqueHorzOffset * frameOffset);
 
-				// var horzOffset = (NT.Globals.horzCenter) - bullet.targetX-300;
-				// var horzOffset = (NT.Globals.horzCenter + bullet.uniqueHorzOffset) ;
+				// var horzOffset = (NT.Globals.horzCenter) - child.targetX-300;
+				// var horzOffset = (NT.Globals.horzCenter + child.uniqueHorzOffset) ;
 				// var horzOffset = (NT.Globals.horzCenter) ;
 				var horzOffset = (NT.Globals.horzCenter) - NT.Player.relativeHorz;
-				var guardOriginOffset = bullet.guardX;
+				var guardOriginOffset = child.guardX;
 				// var horzOffset = (NT.Globals.horzCenter);
 
 				// var horzOffset = 0 ;
-				var frameOffset = (bullet.nowFrame/100);
-				var invertedFrameOffset = (100/bullet.nowFrame);
-				var elevationOffset = (bullet.nowFrame - bullet.startFrame) / (100 - bullet.startFrame) ;
-				var elevation = -(NT.Player.player.height - bullet.height) * elevationOffset;
+				var frameOffset = (child.nowFrame/100);
+				var invertedFrameOffset = (100/child.nowFrame);
+				var elevationOffset = (child.nowFrame - child.startFrame) / (100 - child.startFrame) ;
+				var elevation = -(NT.Player.player.height - child.height) * elevationOffset;
+				var guardElevation = -child.guardElevation * ((100-child.nowFrame)/100);
 				// var elevation = 0;
-				// console.log(bullet.name , elevation, elevationOffset, bullet.startFrame, bullet.nowFrame);
+				// console.log(child.name , elevation, elevationOffset, child.startFrame, child.nowFrame);
+				// console.log(child.name , guardElevation, elevation, elevationOffset, child.startFrame, child.nowFrame);
 
-				// var attackAdjusted = bullet.guardX - bullet.targetX * elevationOffset; 
-				// var attackAdjusted = bullet.guardX - bullet.guardX * elevationOffset ; 
-				var attackAdjusted = bullet.guardX  ; 
+				// var attackAdjusted = child.guardX - child.targetX * elevationOffset; 
+				// var attackAdjusted = child.guardX - child.guardX * elevationOffset ; 
+				var attackAdjusted = child.guardX  ; 
 				// var attackAdjusted = 0; 
 				// var randomTarget = NT.Globals.randomNumber(-NT.Globals.horzCenter,NT.Globals.horzCenter);
 
 				var x = NT.Globals.horzCenter 
 						+ (horzOffset * frameOffset) 
 						+ (guardOriginOffset * frameOffset) 
-						+ (bullet.targetX * elevationOffset)
+						+ (child.targetX * elevationOffset)
 						+ attackAdjusted;
 
 				var y = (NT.Globals.gameHeight - NT.Globals.vertOneThird) * frameOffset
 						+ elevation
+						+ guardElevation
 						+ NT.Globals.vertOneThird;
 
 				var scale = NT.Bullets.spriteScaleMin + frameOffset * NT.Bullets.spriteScale;
-				bullet.setScale(scale, scale / 3);
-				bullet.setAngle(bullet.angle + NT.Globals.randomFloat(1,NT.Bullets.angleSpinSpeed));
-				bullet.setPosition(x,y);
-				bullet.setDepth(NT.Bullets.relativeDepth + bullet.nowFrame);
+				child.setScale(scale, scale / 3);
+				child.setAngle(child.angle + NT.Globals.randomFloat(1,NT.Bullets.angleSpinSpeed));
+				child.setPosition(x,y);
+				child.setDepth(NT.Bullets.relativeDepth + child.nowFrame);
 
-				if(bullet.nowFrame > 99){
-					NT.Bullets.group.killAndHide(bullet);
+				if(child.nowFrame > 99){
+					NT.Bullets.group.killAndHide(child);
 				}
-				var center = bullet.getCenter();
+				var center = child.getCenter();
 				if(center.x < 0
 						|| center.x > NT.Globals.gameWidth
 						|| center.y < 0
 						|| center.y > NT.Globals.gameHeight
 						){
-					NT.Bullets.group.killAndHide(bullet);
+					NT.Bullets.group.killAndHide(child);
 				}
-				if(bullet.nowFrame >= 70){
-					bullet.setTint(Phaser.Display.Color.RandomRGB().color);
-					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
+				if(child.nowFrame >= 70){
+					child.setTint(Phaser.Display.Color.RandomRGB().color);
+					// console.log("child can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
+				// console.log("bullet y",child.name , guardElevation, elevation, child.y);
+
 			}
 	    });
 
@@ -141,8 +151,8 @@ NT.Bullets = {
 
 
 
-	activateBullet: function (bullet, guard) {
-	    bullet
+	activateBullet: function (child, guard) {
+	    child
 	    .setActive(true)
 	    .setVisible(true)
 	    // .setTint(Phaser.Display.Color.RGBToString(NT.Globals.randomNumber(50,255), 255 , 255 ))
@@ -151,37 +161,45 @@ NT.Bullets = {
 	    .play('bullet_shoot');
 
 	    // console.log("bullet n guard", bullet, guard);
-	    bullet.nowTick = guard.nowTick;
-		bullet.nowFrame = guard.nowFrame;
-		bullet.startFrame = guard.nowFrame;
-		bullet.uniqueHorzOffset = guard.uniqueHorzOffset;
+	    child.nowTick = guard.nowTick;
+		child.nowFrame = guard.nowFrame;
+		child.startFrame = guard.nowFrame;
+		child.uniqueHorzOffset = guard.uniqueHorzOffset;
 		// bullet.guardX = guard.x;
-		bullet.guardX = guard.uniqueHorzOffset * (guard.nowFrame/100);
+		child.guardX = guard.uniqueHorzOffset * (guard.nowFrame/100);
+		if(guard.elevation){
+			child.guardElevation = guard.elevation;
+			// console.log("guard elevation", child.guardElevation, guard);
+		}else{
+			child.guardElevation = 1;
+		}
 		// bullet.attackValue = NT.Bullets.attackValue;
 		// bullet.targetX = NT.Player.relativeHorz + NT.Globals.randomNumber(
 	 //            				-100,
 	 //            				100);
-		bullet.targetX = NT.Globals.randomNumber(
+		child.targetX = NT.Globals.randomNumber(
 	            				-NT.Globals.horzCenter,
 	            				NT.Globals.horzCenter);
+
+		child.publicName = guard.publicName + "'s " + child.publicName;
 		// bullet.setDepth(50);
 
 		// bullet.setFrame(NT.Globals.randomNumber(0,4));
-	    // console.log("bullet n guard", bullet.guardX ,bullet, guard);
+	    // console.log("bullet n guard", child.guardY , NT.Globals.vertOneThird,child, guard);
 
 	},
 
 	addBullet: function (guard) {
-	    var bullet = NT.Bullets.group.get(NT.Globals.horzCenter, NT.Globals.vertOneThird);
+	    var child = NT.Bullets.group.get(NT.Globals.horzCenter, NT.Globals.vertOneThird);
 
-	    if (!bullet) return; // None free
+	    if (!child) return; // None free
 
 	    // console.log("guard fires",guard.x, NT.Globals.vertOneThird*2);
 	    // console.log("guard doesnt fire",guard.y, NT.Globals.vertOneThird * NT.Bullets.firingHeightMult);
 
 	    if(guard.y < NT.Globals.vertOneThird * NT.Bullets.firingHeightMult){
 	    	// console.log("guard fires",guard.y, NT.Globals.vertOneThird * NT.Bullets.firingHeightMult);
-	    	NT.Bullets.activateBullet(bullet, guard);
+	    	NT.Bullets.activateBullet(child, guard);
 	    } 
 	    if (guard.y > NT.Globals.vertOneThird * NT.Bullets.firingHeightMult){
 	    	// console.log("guard dies",guard.y, NT.Globals.vertOneThird * NT.Bullets.firingHeightMult);

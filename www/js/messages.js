@@ -20,6 +20,7 @@ NT.Messages = {
     savedTime: 0,
 
     introTextMsg:   "Click to play!!",
+    selectTextMsg:   "Select your Runner!",
     winTextMsg:   "You Won!",
     loseTextMsg:   "You Lost!",
     restartTextMsg:   "Click to restart!",

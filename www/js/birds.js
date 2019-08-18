@@ -13,7 +13,7 @@ NT.Birds = {
 
 	birdMaxTotal: 100,
 
-	lineDelay: 1500,
+	lineDelay: 1300,
 	rarity: 999,
 	spawnFrames: {start: 0, end: 999999},
 
@@ -102,13 +102,20 @@ NT.Birds = {
 				child.setPosition(x,y);
 				child.setDepth(NT.Birds.relativeDepth + child.nowFrame);
 
-				if(child.nowFrame >= 100){
+				if(child.nowFrame >= 50){
 					NT.Birds.group.killAndHide(child);
 				}
-				if(child.nowFrame >= 50){
+				if(child.nowFrame >= 20 && Math.abs(child.uniqueHorzOffset) < 600){
+					
+					if(child.playSound){
+						NT.Sounds.birdflap.play();
+						child.playSound = false;
+					}
 					child.setTint(Phaser.Display.Color.RandomRGB().color);
 					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
+
+				
 			}
 	    });
 
@@ -135,6 +142,8 @@ NT.Birds = {
 
 		child.uniqueElevation = NT.Globals.randomNumber(0,
 	            				NT.Birds.thresholdVert);
+
+		child.playSound = true;
 		// bird.setDepth(50);
 
 		// bird.setFrame(NT.Globals.randomNumber(0,4));

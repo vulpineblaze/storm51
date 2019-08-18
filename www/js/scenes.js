@@ -45,6 +45,7 @@ NT.Scenes.Intro = new Phaser.Class({
 
 
         NT.Sounds.musicAudio = this.sound.add('musicAudio', {loop: true});
+        
         // NT.Sounds.musicAudio.play();
 
 
@@ -55,6 +56,8 @@ NT.Scenes.Intro = new Phaser.Class({
                                     NT.Messages.introTextMsg , 
                                     { fontFamily: 'Anton', fontSize: '48px', fill: '#fff' });
         NT.Messages.introText.setStroke('#000', 5); 
+        NT.Messages.introText.setX( (NT.Globals.gameWidth - NT.Messages.introText.width)/2 ); 
+
 
         this.pointerUp = false;
         this.input.once('pointerup', function () {
@@ -66,7 +69,7 @@ NT.Scenes.Intro = new Phaser.Class({
         }, this);
 
         this.input.once('pointerdown', function () {
-            NT.Sounds.musicAudio.play();
+            NT.Sounds.musicAudio.play({volume:0.1});
         }, this);
 
 
@@ -131,10 +134,11 @@ NT.Scenes.Select = new Phaser.Class({
         var black_center = this.add.sprite(0,0, 'black_center');
         black_center.setDisplayOrigin(0);
 
-        NT.Messages.introText = this.add.text(160, 80, 
-                                    NT.Messages.introTextMsg , 
+        NT.Messages.selectText = this.add.text(0, 40, 
+                                    NT.Messages.selectTextMsg , 
                                     { fontFamily: 'Anton', fontSize: '48px', fill: '#fff' });
-        NT.Messages.introText.setStroke('#000', 5); 
+        NT.Messages.selectText.setStroke('#000', 5); 
+        NT.Messages.selectText.setX( (NT.Globals.gameWidth - NT.Messages.selectText.width)/2 ); 
 
         this.pointerUp = false;
         this.input.once('pointerup', function () {
@@ -187,13 +191,18 @@ NT.Scenes.Select = new Phaser.Class({
             if(k < NT.Player.masterSheets.length){
 
                 child.sheet = NT.Player.masterSheets[k];
-                // console.log("avatar",k, NT.Player.masterSheets.length, child.sheet);
-                var avatar = thisGame.add.sprite(0,0, child.sheet.key);
+                var avatar = thisGame.add.sprite(0,0, child.sheet.key, 1);
                 var relativeScale = scale * child.width / Math.max(avatar.width,avatar.height);
+                // var avatarOffset =  (scale * child.width) - (avatar.width * relativeScale);
+                var avatarOffset = 10;
+                if(avatarOffset < 0){
+                    avatarOffset = 0;
+                }
 
                 avatar.setScale(relativeScale)
                     .setDepth(2)
-                    .setPosition(thisX, thisY);
+                    .setPosition(thisX - avatarOffset, thisY);
+                console.log("avatar",k, avatarOffset,  scale * child.width , (avatar.width * relativeScale), avatar);
 
                 child.avatar = avatar; 
             }
@@ -295,13 +304,17 @@ NT.Scenes.Win = new Phaser.Class({
         this.load.spritesheet('booty_shorts', 'img/booty_shorts.png', { frameWidth: 200, frameHeight: 200 });
         this.load.spritesheet('dancing_alien1', 'img/dancing_alien1.png', { frameWidth: 210, frameHeight: 630 });
         this.load.spritesheet('hoops', 'img/hoops.png', { frameWidth: 100, frameHeight: 100 });
-
+        this.load.audio('endgamealienbeam', ['audio/endgamealienbeam.mp3','audio/endgamealienbeam.ogg']);
     },
 
     create: function ()
     {
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
+
+        NT.Sounds.endgamealienbeam = this.sound.add('endgamealienbeam');
+        NT.Sounds.endgamealienbeam.play();
+
 
         var booty_shortsAnimation = this.anims.create({
             key: 'booty_shorts',
@@ -357,12 +370,14 @@ NT.Scenes.Win = new Phaser.Class({
 	    		wordWrap: {width: NT.Globals.gameWidth - (NT.Globals.horizontalOffset*2)} 
 	    	});
         winText.setStroke('#000', 5);        
+        winText.setX( (NT.Globals.gameWidth - winText.width)/2 ); 
 
 
 	    var restartText = this.add.text(60, NT.Globals.vertOneThird*2.5, 
             NT.Messages.restartTextMsg, 
             { align: 'center', font: '48px Anton', fill: '#fff' });
         restartText.setStroke('#000', 5);        
+        restartText.setX( (NT.Globals.gameWidth - restartText.width)/2 ); 
 
 
         NT.Messages.timeText = this.add.text(40, NT.Globals.vertOneThird*2.8, 
@@ -421,12 +436,17 @@ NT.Scenes.Lose = new Phaser.Class({
     {
 	    // this.load.image('teal_border', 'img/backgrounds_teal_border.png');
 	    this.load.image('black_center', 'img/background_win_lose.png');
+        this.load.audio('losecondition', ['audio/losecondition.mp3','audio/losecondition.ogg']);
+
     },
 
     create: function ()
     {
     	// var teal_border = this.add.image(0, 0, 'teal_border');
 	    // teal_border.setDisplayOrigin(0);
+        NT.Sounds.losecondition = this.sound.add('losecondition');
+        NT.Sounds.losecondition.play();
+
 
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
@@ -447,11 +467,13 @@ NT.Scenes.Lose = new Phaser.Class({
 	    		wordWrap: {width: NT.Globals.gameWidth - (NT.Globals.horizontalOffset*2)} 
 	    	});
         loseText.setStroke('#000', 5);	    
+        loseText.setX( (NT.Globals.gameWidth - loseText.width)/2 ); 
 
         var restartText = this.add.text(60, NT.Globals.vertOneThird*2.5, 
             NT.Messages.restartTextMsg, 
             { align: 'center', font: '48px Anton', fill: '#fff' });
         restartText.setStroke('#000', 5);
+        restartText.setX( (NT.Globals.gameWidth - restartText.width)/2 ); 
 
 	    var fullClick = false;
 
@@ -475,12 +497,35 @@ NT.Scenes.Lose = new Phaser.Class({
 
         }, this);
 
-        FB.ui({
-          method: 'share',
-          href: 'https://storm51game.com/',
-          hashtag: '#storm51game',
-          quote: NT.Messages.loseTextMsg + "\n" + this.inText,
-        }, function(response){});
+
+        
+        if (location.protocol == 'https:'){
+            FB.getLoginStatus(function(response) {
+              if (response.status === 'connected') {
+                // The user is logged in and has authenticated your
+                // app, and response.authResponse supplies
+                // the user's ID, a valid access token, a signed
+                // request, and the time the access token 
+                // and signed request each expire.
+                // var uid = response.authResponse.userID;
+                // var accessToken = response.authResponse.accessToken;
+                FB.ui({
+                  method: 'share',
+                  href: 'https://storm51game.com/',
+                  hashtag: '#storm51game',
+                  quote: NT.Messages.loseTextMsg + "\n" + this.inText,
+                }, function(response){});
+              } else if (response.status === 'not_authorized') {
+                // The user hasn't authorized your application.  They
+                // must click the Login button, or you must call FB.login
+                // in response to a user gesture, to launch a login dialog.
+              } else {
+                // The user isn't logged in to Facebook. You can launch a
+                // login dialog with a user gesture, but the user may have
+                // to log in to Facebook before authorizing your application.
+              }
+             });
+        }
 
 
     }
@@ -529,7 +574,20 @@ NT.Scenes.Play = new Phaser.Class({
         this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
         // this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
-        this.load.audio('brroww', 'audio/brroww.wav');
+        this.load.audio('barricadecollide', ['audio/barricadecollide.mp3','audio/barricadecollide.ogg']);
+        this.load.audio('bulletcollide2', ['audio/bulletcollide2.mp3','audio/bulletcollide2.ogg']);
+        this.load.audio('dewycollide', ['audio/dewycollide.mp3','audio/dewycollide.ogg']);
+        // this.load.audio('endgamealienbeam', 'audio/wavs/endgamealienbeam.wav');
+        this.load.audio('heliblades', ['audio/heliblades.mp3','audio/heliblades.ogg']);
+        this.load.audio('hitsign', ['audio/hitsign.mp3','audio/hitsign.ogg']);
+        this.load.audio('running', ['audio/running.mp3','audio/running.ogg']);
+
+
+        this.load.audio('fiftycal', ['audio/fiftycal.mp3','audio/fiftycal.ogg']);
+        this.load.audio('ninemil', ['audio/ninemil.mp3','audio/ninemil.ogg']);
+        this.load.audio('birdflap', ['audio/birdflap.mp3','audio/birdflap.ogg'],{
+            instances: 5
+        });
 
     },
 
@@ -544,6 +602,20 @@ NT.Scenes.Play = new Phaser.Class({
         // // this.sound.play('musicAudio');
         // // musicAudio.setLoop(true);
         // musicAudio.play();
+        NT.Sounds.fiftycal = this.sound.add('fiftycal');
+        NT.Sounds.ninemil = this.sound.add('ninemil');
+        NT.Sounds.birdflap = this.sound.add('birdflap');
+        
+        NT.Sounds.barricadecollide = this.sound.add('barricadecollide');
+        // NT.Sounds.bulletcollide = this.sound.add('bulletcollide');
+        NT.Sounds.bulletcollide2 = this.sound.add('bulletcollide2');
+        NT.Sounds.dewycollide = this.sound.add('dewycollide');
+        // NT.Sounds.endgamealienbeam = this.sound.add('endgamealienbeam');
+        NT.Sounds.heliblades = this.sound.add('heliblades');
+        NT.Sounds.hitsign = this.sound.add('hitsign');
+        NT.Sounds.running = this.sound.add('running');
+        
+        // NT.Sounds.running.play({loop:true});
 
         var pauseBorder = Math.min(NT.Globals.gameWidth, NT.Globals.gameHeight) * 0.05;
         NT.Globals.pauseRect = new Phaser.Geom.Rectangle(pauseBorder, 
@@ -580,7 +652,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Globals.roadbumperTriangleGraphics.setDepth(NT.Globals.roadTriangleGraphics.depth-1);
 
         NT.Globals.roadTriangleGraphics.fillTriangleShape(NT.Globals.roadTriangle);
-        console.log("road:",NT.Globals.roadTriangleGraphics,NT.Globals.roadbumperTriangleGraphics);
+        // console.log("road:",NT.Globals.roadTriangleGraphics,NT.Globals.roadbumperTriangleGraphics);
 
 
         mountain = this.add.image(0, 0, 'mountain');
@@ -808,9 +880,9 @@ NT.Scenes.Play = new Phaser.Class({
 
                 if (NT.Globals.checkOverlap(NT.Player.player, barracade, NT.Barracades.collideSoftness)){
                     // console.log('collide try:',barracade.nowFrame,NT.Player.player, barracade);
-                    // thisGame.scene.start('lose', { id: 2, text:  "Collided with: "+barracade.name  });
-                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.name );
-
+                    // thisGame.scene.start('lose', { id: 2, text:  "Collided with: "+barracade.publicName  });
+                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.publicName );
+                    NT.Sounds.barricadecollide.play();
                 };
             }
         });
@@ -818,7 +890,15 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Guards.group.children.iterate(function (child) {
             if(child && child.active && child.nowFrame > 80 && child.nowFrame < 90){
                 if (NT.Globals.checkOverlap(NT.Player.player, child, NT.Guards.collideSoftness)){
-                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+child.name );
+                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+child.publicName );
+                };
+            }
+        });
+
+        NT.Deweys.group.children.iterate(function (child) {
+            if(child && child.active && child.nowFrame > 70 && child.nowFrame < 90){
+                if (NT.Globals.checkOverlap(NT.Player.player, child, NT.Deweys.collideSoftness)){
+                    NT.Deweys.beenTapped(child);
                 };
             }
         });
@@ -831,8 +911,9 @@ NT.Scenes.Play = new Phaser.Class({
                     isOverlap = true;
                 }
                 if(isOverlap && bullet.nowFrame > 70 && bullet.nowFrame < 90){
-                    console.log("bullet collide", bullet.nowFrame, bullet, NT.Player.player, NT.Player.relativeHorz);
-                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.name );
+                    // console.log("bullet collide", bullet.nowFrame, bullet, NT.Player.player, NT.Player.relativeHorz);
+                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.publicName );
+                    NT.Sounds.bulletcollide2.play();
                 }
             }
         });
@@ -862,11 +943,13 @@ NT.Scenes.Play = new Phaser.Class({
         for(i=0;i<NT.Signs.signTriggerFrames.length;++i){
             if(NT.Signs.signTriggerFrames[i] > -1 && NT.Signs.signTriggerFrames[i] < NT.Player.runTicks){
                 NT.Signs.signTriggerFrames[i] = -1;
-                console.log(NT.Signs.signTriggerText[i] , i , );
+                // console.log(NT.Signs.signTriggerText[i] , i , );
                 NT.Signs.addChild(-450, NT.Signs.signTriggerText[i]);
                 NT.Signs.updateChildren();
             }
         } 
+
+
 
        
     },
@@ -900,6 +983,9 @@ NT.Scenes.Play = new Phaser.Class({
             this.tickBasedBackgroundColor();
         }
         
+        if(NT.Helos.spawnOnce){
+            NT.Helos.addChild();
+        }
     }, 
 
 
@@ -942,6 +1028,17 @@ NT.Scenes.Play = new Phaser.Class({
             if(guard && guard.active && guard.nowFrame > 1 && guard.nowFrame < 40){
                 // console.log('guard bullet:',guard.nowFrame, guard);
                 NT.Bullets.addBullet(guard);
+                NT.Sounds.ninemil.play();
+
+            }
+        });
+        NT.Helos.group.children.iterate(function (child) {
+            // console.log('guard test:',guard.nowFrame, guard);
+
+            if(child && child.active && child.nowFrame >= NT.Helos.hoverFrame && child.nowFrame < NT.Helos.hoverFrame+5){
+                // console.log('guard bullet:',guard.nowFrame, guard);
+                NT.Bullets.addBullet(child);
+                NT.Sounds.fiftycal.play();
             }
         });
 
@@ -959,7 +1056,7 @@ NT.Scenes.Play = new Phaser.Class({
     lineTimerEventBirds: function(){
         // workaround for timer
         NT.Birds.addChild();
-        NT.Helos.addChild();
+        // NT.Helos.addChild();
     }, 
 
     tickBasedBackgroundColor: function(){

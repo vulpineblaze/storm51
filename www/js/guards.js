@@ -13,6 +13,7 @@ NT.Guards = {
 
 	guardMaxTotal: 10,
 
+
 	lineDelay: 3800,
 	rarity: 900,
 	spawnFrames: {start: 300, end: 600},
@@ -20,6 +21,9 @@ NT.Guards = {
 	thresholdOuter: 1000,
 	thresholdInner: 300,
 	relativeDepth: 10,
+
+	publicName: "Guard",
+
 
 	refresh: function (){
 		NT.Guards.frameMult = NT.Globals.baseFrameMult;
@@ -56,6 +60,7 @@ NT.Guards = {
 	        maxSize: NT.Guards.guardMaxTotal,
 	        createCallback: function (child) {
 	            child.setName('guard' + this.getLength());
+	            child.publicName = NT.Guards.publicName;
 	            child
 				    .setActive(false)
 				    .setVisible(false);

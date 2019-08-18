@@ -142,7 +142,7 @@ NT.Globals = {
 			keyString.push(48+i);
 		}    
 		NT.Globals.keys = thisGame.input.keyboard.addKeys(keyString);
-		console.log("keys",NT.Globals.keys,keyString);
+		// console.log("keys",NT.Globals.keys,keyString);
     } 
 };
 

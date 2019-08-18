@@ -50,22 +50,22 @@
     <SCRIPT SRC="js/scenes.js"></SCRIPT>
     <SCRIPT SRC="js/main.js"></SCRIPT> -->
     <script>
-        var v = Math.floor(Math.random() * 9999);
-        document.write('<script src="js/main.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/scenes.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/messages.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/globals.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/line.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/player.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/cactuses.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/barracades.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/deweys.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/guards.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/bullets.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/sounds.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/signs.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/birds.js?dev=' + v + '"\><\/script>');
-        document.write('<script src="js/helos.js?dev=' + v + '"\><\/script>');
+        function v() {return Math.floor(Math.random() * 9999);}
+        document.write('<script src="js/main.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/scenes.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/messages.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/globals.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/line.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/player.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/cactuses.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/barracades.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/deweys.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/guards.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/bullets.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/sounds.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/signs.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/birds.js?dev=' +v()+ '"\><\/script>');
+        document.write('<script src="js/helos.js?dev=' +v()+ '"\><\/script>');
     </script>
 
     <p style="font-family: Anton"> </p>
@@ -82,13 +82,15 @@
 
     <span id="fbLogout" onclick="fbLogout()"><a class="fb_button fb_button_medium"><span class="fb_button_text">Logout</span></a></span> -->
 
-    <div class="fb-login-button" data-width="" data-size="small" data-button-type="login_with" data-auto-logout-link="true" ></div>
+    
 
-    <div id="status">
+
+    <div class="container">
+        <div id="myFB" class="fb-login-button" data-width="" data-size="small" data-button-type="login_with" data-auto-logout-link="true" ></div>
+
+        <div id="storm51"></div>
     </div>
-
-
-    <div id="storm51"></div>
+    
 
 
     <!-- <script>
