@@ -17,15 +17,15 @@ NT.Deweys = {
 
 	collideSoftness: 0,
 
-	lineDelay: 1100,
+	lineDelay: 1125,
 
 	threshold: 1000,
 
-	boostTime: 300,
+	boostTime: 500,
 	relativeDepth: 10,
 
 	refresh: function (){
-		NT.Deweys.frameMult = NT.Globals.baseFrameMult;
+		NT.Deweys.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Deweys.timedEvent;
 	},
 
@@ -78,7 +78,7 @@ NT.Deweys = {
 				if(dewey.nowFrame >= 100){
 					NT.Deweys.group.killAndHide(dewey);
 				}else if(dewey.nowFrame >= 70){
-					dewey.setTint(Phaser.Display.Color.RandomRGB().color);
+					// dewey.setTint(Phaser.Display.Color.RandomRGB().color);
 				}
 			}
 	    });

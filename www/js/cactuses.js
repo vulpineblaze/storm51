@@ -18,7 +18,7 @@ NT.Cactuses = {
 	relativeDepth: 0,
 
 	refresh: function (){
-		NT.Cactuses.frameMult = NT.Globals.baseFrameMult;
+		NT.Cactuses.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Cactuses.timedEvent;
 	},		
 

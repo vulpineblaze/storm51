@@ -5,15 +5,31 @@ if(NT === undefined) {
 NT.Player = {
 
 	masterSheets: [
-	    { key: 'pony', path: 'img/pony_quickie_trim2_80x200.png', frameWidth: 80, frameHeight: 200 },
-	    { key: 'naruto', path: 'img/naruto_run_quickie.png', frameWidth: 110, frameHeight: 140 }
+	    { 	
+	    	key: 'pony', 
+	    	path: 'img/pony_quickie_trim2_80x200.png', 
+	    	frameWidth: 80, 
+	    	frameHeight: 200,
+	    	frameMult: 1.015,
+	    	agilityAdded: 2,
+	    	tickFactorIncrease: 0.015 
+	    },
+	    { 	
+	    	key: 'naruto', 
+	    	path: 'img/naruto_run_quickie.png', 
+	    	frameWidth: 110, 
+	    	frameHeight: 140,
+	    	frameMult: 1.005,
+	    	agilityAdded: 10,
+	    	tickFactorIncrease: 0.005  
+	    }
 	],
 
 	refresh: function (){
 		// NT.Player.player = 0;
 		NT.Player.relativeHorz = 300;
-		NT.Player.dragValue = 9;
-		NT.Player.dragThreshold = 5;
+		NT.Player.dragValue = 9 + NT.Player.thisSheet.agilityAdded;
+		NT.Player.dragThreshold = 5 + NT.Player.thisSheet.agilityAdded/2;
 		NT.Player.runTicks = 0;
 		NT.Player.speedBoost = 1; 
 		NT.Player.speedBoostEvent = "";
@@ -50,7 +66,7 @@ NT.Player = {
 		if(NT.Player.speedBoost > 1){
 			tickMult = NT.Player.speedBoost * 1.5;
 		}
-		NT.Player.runTicks += 1 * tickMult;
+		NT.Player.runTicks += 1 * (tickMult + NT.Player.thisSheet.tickFactorIncrease);
 	},
 
 	updatePlayer: function(){

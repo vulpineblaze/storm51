@@ -20,7 +20,7 @@ NT.Signs = {
 	signTriggerText: ["Hello World","Second hello"],
 
 	refresh: function (){
-		NT.Signs.frameMult = NT.Globals.baseFrameMult;
+		NT.Signs.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Signs.timedEvent;
 		NT.Signs.signUp = false;
 		NT.Signs.signFullClick = false;

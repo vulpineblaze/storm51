@@ -13,9 +13,6 @@ NT.Globals = {
 	movesUpdate: 0,
 	movesDifficultyOffset: 5,
 
-	musicMax: 0.6,
-	musicVolume: 0.6,
-
 	squarePx: 60,
 	squareWidth: 9,
 	squareHeight: 12,
@@ -36,7 +33,7 @@ NT.Globals = {
     },
 
 	level: 1,
-	winGameTicks: 2000,
+	winGameTicks: 5000,
 	millisPerTick: 30,
 
 	randomNumber: function (min, max) {  

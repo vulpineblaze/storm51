@@ -14,9 +14,9 @@ NT.Guards = {
 	guardMaxTotal: 10,
 
 
-	lineDelay: 3800,
+	lineDelay: 3550,
 	rarity: 900,
-	spawnFrames: {start: 300, end: 600},
+	spawnFrames: {start: 1650, end: 4000},
 
 	thresholdOuter: 1000,
 	thresholdInner: 300,
@@ -26,7 +26,7 @@ NT.Guards = {
 
 
 	refresh: function (){
-		NT.Guards.frameMult = NT.Globals.baseFrameMult;
+		NT.Guards.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Guards.timedEvent;
 	},
 
@@ -131,7 +131,7 @@ NT.Guards = {
 					NT.Guards.group.killAndHide(child);
 				}
 				if(child.nowFrame >= 50){
-					child.setTint(Phaser.Display.Color.RandomRGB().color);
+					// child.setTint(Phaser.Display.Color.RandomRGB().color);
 					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 			}

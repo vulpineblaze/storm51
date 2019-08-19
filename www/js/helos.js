@@ -11,10 +11,10 @@ NT.Helos = {
 	spriteAngle: -5,
 	collideSoftness: 30, 
 
-	heloMaxTotal: 100,
+	heloMaxTotal: 10,
 
 	rarity: 999,
-	spawnFrames: {start: 100, end: 300},
+	spawnFrames: {start: 4000, end: 4500},
 
 	thresholdOuter: 3000,
 	thresholdInner: 1,
@@ -33,7 +33,7 @@ NT.Helos = {
 	publicName: "Attack Helicopter",
 
 	refresh: function (){
-		NT.Helos.frameMult = NT.Globals.baseFrameMult ;
+		NT.Helos.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Helos.timedEvent;
 		NT.Helos.spawnOnce = true;
 	},
@@ -157,21 +157,18 @@ NT.Helos = {
 				child.setPosition(x,y);
 				child.setDepth(NT.Helos.relativeDepth + child.nowFrame);
 
-				var tempVol = ((100+child.nowFrame)/(200));
-				if(tempVol > 1){
-					tempVol = 1;
-				}
-				// NT.Sounds.heliblades.volume = tempVol;
 
 				if(child.nowFrame >= 100){
+					child.hoverState = "ded";
 					NT.Helos.group.killAndHide(child);
 					NT.Helos.spawnOnce = true;
-
+					NT.Sounds.heliblades.stop();
 				}
 				if(child.nowFrame >= NT.Helos.hoverFrame){
-					child.setTint(Phaser.Display.Color.RandomRGB().color);
-					// NT.Sounds.heliblades.play({loop:true, volume: tempVol});
-					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
+					// child.setTint(Phaser.Display.Color.RandomRGB().color);
+					if( !NT.Sounds.heliblades.isPlaying ){
+						NT.Sounds.myPlay('heliblades');
+					}
 				}
 			}
 	    });
@@ -194,7 +191,7 @@ NT.Helos = {
 
 
 		child.uniqueElevation = 0;
-
+		child.hoverState = "spawn";
 		
 
 		// child.uniqueElevation = NT.Globals.randomNumber(0,

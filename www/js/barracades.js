@@ -15,14 +15,14 @@ NT.Barracades = {
 	barracadeMaxTotal: 20,
 	publicName: "Barracade",
 
-	lineDelay: 1000,
+	lineDelay: 950,
 
 	threshold: 350,
 	collideSoftness: 30, 
 	relativeDepth: 10,
 
 	refresh: function (){
-		NT.Barracades.frameMult = NT.Globals.baseFrameMult;
+		NT.Barracades.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 		NT.Barracades.timedEvent;
 	},		
 
@@ -72,7 +72,7 @@ NT.Barracades = {
 					NT.Barracades.group.killAndHide(barracade);
 				}
 				if(barracade.nowFrame >= 70){
-					barracade.setTint(Phaser.Display.Color.RandomRGB().color);
+					// barracade.setTint(Phaser.Display.Color.RandomRGB().color);
 				}
 			}
 	    });

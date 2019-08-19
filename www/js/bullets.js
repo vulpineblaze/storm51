@@ -21,7 +21,7 @@ NT.Bullets = {
 
 		NT.Bullets.spriteScale = 5;
 		NT.Bullets.spriteScaleMin = 1;
-		NT.Bullets.frameMult = NT.Globals.baseFrameMult * 1.03;
+		NT.Bullets.frameMult = NT.Globals.baseFrameMult * 1.03 * NT.Player.thisSheet.frameMult;
 
 		
 
@@ -139,7 +139,7 @@ NT.Bullets = {
 					NT.Bullets.group.killAndHide(child);
 				}
 				if(child.nowFrame >= 70){
-					child.setTint(Phaser.Display.Color.RandomRGB().color);
+					// child.setTint(Phaser.Display.Color.RandomRGB().color);
 					// console.log("child can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 				// console.log("bullet y",child.name , guardElevation, elevation, child.y);
@@ -181,7 +181,7 @@ NT.Bullets = {
 	            				-NT.Globals.horzCenter,
 	            				NT.Globals.horzCenter);
 
-		child.publicName = guard.publicName + "'s " + child.publicName;
+		child.publicName = guard.publicName + "'s " + NT.Bullets.publicName;
 		// bullet.setDepth(50);
 
 		// bullet.setFrame(NT.Globals.randomNumber(0,4));

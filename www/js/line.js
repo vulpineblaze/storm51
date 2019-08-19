@@ -19,7 +19,7 @@ NT.Line = {
 	
 	refresh: function (){
 		NT.Line.group;
-		NT.Line.frameMult = NT.Globals.baseFrameMult;
+		NT.Line.frameMult = NT.Globals.baseFrameMult * NT.Player.thisSheet.frameMult;
 
 		NT.Line.timedEvent;
 
@@ -80,7 +80,7 @@ NT.Line = {
 				if(line.nowFrame >= 100){
 					NT.Line.group.killAndHide(line);
 				}else if(line.nowFrame >= 70){
-					line.setTint(Phaser.Display.Color.RandomRGB().color);
+					// line.setTint(Phaser.Display.Color.RandomRGB().color);
 				}
 			}
 	    });

@@ -33,8 +33,8 @@ NT.Scenes.Intro = new Phaser.Class({
         this.load.image('black_center', 'img/background_win_lose.png');
 	    this.load.image('tinySquare', 'img/tinySquare.png');
 
-        this.load.audio('emptySound', ['audio/emptySound.mp3','audio/emptySound.ogg']);
-        this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
+        
+        NT.Sounds.preload(this);
 
 
     },
@@ -42,9 +42,9 @@ NT.Scenes.Intro = new Phaser.Class({
     create: function ()
     {
 
+        NT.Sounds.create(this);
 
-
-        NT.Sounds.musicAudio = this.sound.add('musicAudio', {loop: true});
+        
         
         // NT.Sounds.musicAudio.play();
 
@@ -69,14 +69,14 @@ NT.Scenes.Intro = new Phaser.Class({
         }, this);
 
         this.input.once('pointerdown', function () {
-            NT.Sounds.musicAudio.play({volume:0.1});
+            NT.Sounds.myPlay('TheyCantStopUsAll');
         }, this);
 
 
     },
 
     update: function (){
-        if(this.pointerUp && NT.Sounds.musicAudio.isPlaying){
+        if(this.pointerUp && NT.Sounds.TheyCantStopUsAll.isPlaying){
             console.log("audio loaded!");
             this.scene.start('select');
         }
@@ -150,7 +150,7 @@ NT.Scenes.Select = new Phaser.Class({
         }, this);
 
         this.input.once('pointerdown', function () {
-            NT.Sounds.musicAudio.play();
+            // NT.Sounds.musicAudio.play();
         }, this);
 
 
@@ -304,7 +304,7 @@ NT.Scenes.Win = new Phaser.Class({
         this.load.spritesheet('booty_shorts', 'img/booty_shorts.png', { frameWidth: 200, frameHeight: 200 });
         this.load.spritesheet('dancing_alien1', 'img/dancing_alien1.png', { frameWidth: 210, frameHeight: 630 });
         this.load.spritesheet('hoops', 'img/hoops.png', { frameWidth: 100, frameHeight: 100 });
-        this.load.audio('endgamealienbeam', ['audio/endgamealienbeam.mp3','audio/endgamealienbeam.ogg']);
+        
     },
 
     create: function ()
@@ -312,7 +312,6 @@ NT.Scenes.Win = new Phaser.Class({
     	var black_center = this.add.sprite(0,0, 'black_center').setInteractive();
 	    black_center.setDisplayOrigin(0);
 
-        NT.Sounds.endgamealienbeam = this.sound.add('endgamealienbeam');
         NT.Sounds.endgamealienbeam.play();
 
 
@@ -436,7 +435,6 @@ NT.Scenes.Lose = new Phaser.Class({
     {
 	    // this.load.image('teal_border', 'img/backgrounds_teal_border.png');
 	    this.load.image('black_center', 'img/background_win_lose.png');
-        this.load.audio('losecondition', ['audio/losecondition.mp3','audio/losecondition.ogg']);
 
     },
 
@@ -444,7 +442,6 @@ NT.Scenes.Lose = new Phaser.Class({
     {
     	// var teal_border = this.add.image(0, 0, 'teal_border');
 	    // teal_border.setDisplayOrigin(0);
-        NT.Sounds.losecondition = this.sound.add('losecondition');
         NT.Sounds.losecondition.play();
 
 
@@ -458,9 +455,9 @@ NT.Scenes.Lose = new Phaser.Class({
         NT.Messages.timeText.setStroke('#000', 5);        
 
 
-
+        var specificMessage = this.inText;
 		var loseText = this.add.text(NT.Globals.horizontalOffset, 80, 
-	    	NT.Messages.loseTextMsg + "\n" + this.inText, 
+	    	NT.Messages.loseTextMsg + "\n" + specificMessage, 
 	    	{ align: 'center', 
 	    		font: '48px Anton', 
 	    		fill: '#fff', 
@@ -513,7 +510,7 @@ NT.Scenes.Lose = new Phaser.Class({
                   method: 'share',
                   href: 'https://storm51game.com/',
                   hashtag: '#storm51game',
-                  quote: NT.Messages.loseTextMsg + "\n" + this.inText,
+                  quote: NT.Messages.loseTextMsg + "\n" + specificMessage,
                 }, function(response){});
               } else if (response.status === 'not_authorized') {
                 // The user hasn't authorized your application.  They
@@ -573,21 +570,7 @@ NT.Scenes.Play = new Phaser.Class({
         this.load.spritesheet('helo', 'img/helo_mini.png', { frameWidth: 300, frameHeight: 126 });
         this.load.spritesheet('bullet', 'img/bullet.png', { frameWidth: 8, frameHeight: 8 });
 
-        // this.load.audio('musicAudio', ['audio/TheyCantStopUsAll.mp3','audio/TheyCantStopUsAll.ogg']);
-        this.load.audio('barricadecollide', ['audio/barricadecollide.mp3','audio/barricadecollide.ogg']);
-        this.load.audio('bulletcollide2', ['audio/bulletcollide2.mp3','audio/bulletcollide2.ogg']);
-        this.load.audio('dewycollide', ['audio/dewycollide.mp3','audio/dewycollide.ogg']);
-        // this.load.audio('endgamealienbeam', 'audio/wavs/endgamealienbeam.wav');
-        this.load.audio('heliblades', ['audio/heliblades.mp3','audio/heliblades.ogg']);
-        this.load.audio('hitsign', ['audio/hitsign.mp3','audio/hitsign.ogg']);
-        this.load.audio('running', ['audio/running.mp3','audio/running.ogg']);
-
-
-        this.load.audio('fiftycal', ['audio/fiftycal.mp3','audio/fiftycal.ogg']);
-        this.load.audio('ninemil', ['audio/ninemil.mp3','audio/ninemil.ogg']);
-        this.load.audio('birdflap', ['audio/birdflap.mp3','audio/birdflap.ogg'],{
-            instances: 5
-        });
+        
 
     },
 
@@ -602,20 +585,7 @@ NT.Scenes.Play = new Phaser.Class({
         // // this.sound.play('musicAudio');
         // // musicAudio.setLoop(true);
         // musicAudio.play();
-        NT.Sounds.fiftycal = this.sound.add('fiftycal');
-        NT.Sounds.ninemil = this.sound.add('ninemil');
-        NT.Sounds.birdflap = this.sound.add('birdflap');
         
-        NT.Sounds.barricadecollide = this.sound.add('barricadecollide');
-        // NT.Sounds.bulletcollide = this.sound.add('bulletcollide');
-        NT.Sounds.bulletcollide2 = this.sound.add('bulletcollide2');
-        NT.Sounds.dewycollide = this.sound.add('dewycollide');
-        // NT.Sounds.endgamealienbeam = this.sound.add('endgamealienbeam');
-        NT.Sounds.heliblades = this.sound.add('heliblades');
-        NT.Sounds.hitsign = this.sound.add('hitsign');
-        NT.Sounds.running = this.sound.add('running');
-        
-        // NT.Sounds.running.play({loop:true});
 
         var pauseBorder = Math.min(NT.Globals.gameWidth, NT.Globals.gameHeight) * 0.05;
         NT.Globals.pauseRect = new Phaser.Geom.Rectangle(pauseBorder, 
@@ -737,6 +707,7 @@ NT.Scenes.Play = new Phaser.Class({
                                                 callbackScope: this, 
                                                 loop: true });
       
+        NT.Player.createPlayer();
 
         // do once
         NT.Line.createLines();
@@ -753,7 +724,6 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Helos.createChildren();
 
 
-        NT.Player.createPlayer();
         
 
 
@@ -881,7 +851,7 @@ NT.Scenes.Play = new Phaser.Class({
                 if (NT.Globals.checkOverlap(NT.Player.player, barracade, NT.Barracades.collideSoftness)){
                     // console.log('collide try:',barracade.nowFrame,NT.Player.player, barracade);
                     // thisGame.scene.start('lose', { id: 2, text:  "Collided with: "+barracade.publicName  });
-                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.publicName );
+                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+barracade.publicName );
                     NT.Sounds.barricadecollide.play();
                 };
             }
@@ -890,7 +860,7 @@ NT.Scenes.Play = new Phaser.Class({
         NT.Guards.group.children.iterate(function (child) {
             if(child && child.active && child.nowFrame > 80 && child.nowFrame < 90){
                 if (NT.Globals.checkOverlap(NT.Player.player, child, NT.Guards.collideSoftness)){
-                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+child.publicName );
+                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+child.publicName );
                 };
             }
         });
@@ -912,7 +882,7 @@ NT.Scenes.Play = new Phaser.Class({
                 }
                 if(isOverlap && bullet.nowFrame > 70 && bullet.nowFrame < 90){
                     // console.log("bullet collide", bullet.nowFrame, bullet, NT.Player.player, NT.Player.relativeHorz);
-                    //UNFUCK NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.publicName );
+                    NT.Globals.shutdownScene(myTime, 'lose',  "Collided with: "+bullet.publicName );
                     NT.Sounds.bulletcollide2.play();
                 }
             }

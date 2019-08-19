@@ -23,7 +23,7 @@ NT.Birds = {
 	relativeDepth: 10,
 
 	refresh: function (){
-		NT.Birds.frameMult = NT.Globals.baseFrameMult * 1.02;
+		NT.Birds.frameMult = NT.Globals.baseFrameMult * 1.02 * NT.Player.thisSheet.frameMult;
 		NT.Birds.timedEvent;
 	},
 
@@ -111,7 +111,7 @@ NT.Birds = {
 						NT.Sounds.birdflap.play();
 						child.playSound = false;
 					}
-					child.setTint(Phaser.Display.Color.RandomRGB().color);
+					// child.setTint(Phaser.Display.Color.RandomRGB().color);
 					// console.log("bullet can hit", elevation ,NT.Player.player.height , frameOffset , NT.Bullets.elevationPercent);
 				}
 
